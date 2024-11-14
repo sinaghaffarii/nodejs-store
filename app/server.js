@@ -2,6 +2,7 @@ const express = require("express");
 const { default: mongoose } = require("mongoose");
 const path = require("path");
 const { AllRoutes } = require("./router/router");
+const morgan = require("morgan");
 
 module.exports = class Application {
   #app = express();
@@ -18,6 +19,7 @@ module.exports = class Application {
     this.errorHandling();
   }
   configApplication() {
+    this.#app.use(morgan("dev"));
     this.#app.use(express.json());
     this.#app.use(express.urlencoded({ extended: true }));
     this.#app.use(express.static(path.join(__dirname, "..", "public")));
@@ -30,11 +32,19 @@ module.exports = class Application {
   }
 
   async connectToMongoDB() {
+    mongoose.connection.on("connected", () => {
+      console.log("Mongoose connected to DB.");
+    });
+    mongoose.connection.on("disconnected", () => {
+      console.log("mongoose connection is disconnected.");
+    });
+    process.on("SIGINT", async () => {
+      await mongoose.connection.close();
+      console.log("disconnected");
+      process.exit(0);
+    });
     try {
-      await mongoose.connect(this.#DB_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
+      await mongoose.connect(this.#DB_URL);
       console.log("Connected to MongoDB");
     } catch (error) {
       console.error("Failed to connect to MongoDB:", error);
