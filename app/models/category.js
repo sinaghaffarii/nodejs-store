@@ -1,0 +1,9 @@
+const { default: mongoose, mongo } = require("mongoose");
+
+const Schema = new mongoose.Schema({
+  title: { type: String, required: true },
+});
+
+module.exports = {
+  CategoryModel: mongoose.model("category", Schema),
+};
