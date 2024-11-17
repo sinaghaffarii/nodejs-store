@@ -4,4 +4,7 @@ module.exports = class Controller {
   constructor() {
     autoBind(this);
   }
+  testMode() {
+    return "Test String";
+  }
 };
