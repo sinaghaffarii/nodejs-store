@@ -15,13 +15,24 @@ const Joi = require("joi");
 //     .error(new Error("کلمه عبور وارد شده باید بین 6 الی 16 کاراکتر باشد.")),
 // });
 
-const authSchema = Joi.object().keys({
+const getOtpSchema = Joi.object().keys({
   mobile: Joi.string()
     .length(11)
     .pattern(/^09[0-9]{9}$/)
     .error(new Error("شماره موبایل وارد شده نادرست است.")),
 });
+const checkOtpSchema = Joi.object().keys({
+  mobile: Joi.string()
+    .length(11)
+    .pattern(/^09[0-9]{9}$/)
+    .error(new Error("شماره موبایل وارد شده نادرست است.")),
+  code: Joi.string()
+    .min(4)
+    .max(6)
+    .error(new Error("کد ارسال شده صحیح نمیباشد.")),
+});
 
 module.exports = {
-  authSchema,
+  getOtpSchema,
+  checkOtpSchema,
 };
