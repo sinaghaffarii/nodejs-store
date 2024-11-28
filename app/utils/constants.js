@@ -1,4 +1,5 @@
 module.exports = Object.freeze({
+  MongoIDPattern: /^(?=[a-fd]{24}$)(d+[a-f]|[a-f]+d)/i,
   RULES: {
     USER: "USER",
     ADMIN: "ADMIN",
