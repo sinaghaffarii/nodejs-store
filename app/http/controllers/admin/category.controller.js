@@ -1,12 +1,16 @@
 const { CategoryModel } = require("../../../models/category");
-const { addCategorySchema } = require("../../validators/admin/category.schema");
+const {
+  addCategorySchema,
+  updateCategorySchema,
+} = require("../../validators/admin/category.schema");
 const Controller = require("../controller");
 const createError = require("http-errors");
+const { default: mongoose } = require("mongoose");
 
 class CategoryController extends Controller {
   async addCategory(req, res, next) {
     try {
-      await addCategorySchema.validateAsync(req.body);
+      await addCategorySchema.validate(req.body);
       const { title, parent } = req.body;
       const category = await CategoryModel.create({ title, parent });
       if (!category) throw createError.internalServerError("خطای شبکه ");
@@ -24,8 +28,12 @@ class CategoryController extends Controller {
     try {
       const { id } = req.params;
       const category = await this.checkExistCategory(id);
-      const deleteResult = await CategoryModel.deleteOne({
-        __id: category.__id,
+      // const deleteResult = await CategoryModel.deleteOne({
+      //   __id: category.__id,
+      // });
+      // برای حذف هم زمان زیرمجموعه ها و خود دسته بندی به این صورت باید نوشته شود
+      const deleteResult = await CategoryModel.deleteMany({
+        $or: [{ _id: category._id }, { parent: category._id }],
       });
       if (deleteResult.deletedCount == 0)
         throw createError.internalServerError("حذف دسته بندی انجام نشد.");
@@ -37,15 +45,99 @@ class CategoryController extends Controller {
       next(error);
     }
   }
-  async editCategory(req, res, next) {
+  async editCategoryTitle(req, res, next) {
     try {
+      const { id } = req.params;
+      const { title } = req.body;
+      const category = await this.checkExistCategory(id);
+      await updateCategorySchema.validate(req.body);
+      const resultOfUpdate = await CategoryModel.updateOne(
+        { _id: id },
+        { $set: { title } }
+      );
+      if (resultOfUpdate.modifiedCount == 0)
+        throw createError.internalServerError("بروز رسانی انجام نشد.");
+      return res.status(200).json({
+        data: {
+          statusCode: 200,
+          message: "بروز رسانی با موفقیت انجام شد",
+        },
+      });
     } catch (error) {
       next(error);
     }
   }
   async getAllCategory(req, res, next) {
     try {
+      // const category = await CategoryModel.aggregate([
+      //   {
+      //     $lookup: {
+      //       from: "categories",
+      //       localField: "_id",
+      //       foreignField: "parent",
+      //       as: "children",
+      //     },
+      //   },
+      //   {
+      //     $project: {
+      //       __v: 0,
+      //       "children.__v ": 0,
+      //       "children.parent": 0,
+      //     },
+      //   },
+      //   {
+      //     $match: {
+      //       parent: undefined
+      //     }
+      //   }
+      // ]);
+      // const category = await CategoryModel.aggregate([
+      //   {
+      //     $graphLookup: {
+      //       from: "categories",
+      //       startWith: "$_id",
+      //       connectFromField: "_id",
+      //       connectToField: "parent",
+      //       maxDepth: 5,
+      //       depthField: "depth",
+      //       as: "children",
+      //     },
+      //   },
+      //   {
+      //     $project: {
+      //       __v: 0,
+      //       "children.__v": 0,
+      //       "children.parent": 0,
+      //     },
+      //   },
+      //   {
+      //     $match: {
+      //       parent: undefined,
+      //     },
+      //   },
+      // ]);
+
+      const categories = await CategoryModel.find(
+        { parent: undefined },
+        { __v: 0 }
+      );
+      return res.status(200).json({
+        data: {
+          statusCode: 200,
+          categories,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async getCategoryById(req, res, next) {
+    try {
+      const { id: _id } = req.params;
       const category = await CategoryModel.aggregate([
+        {
+          $match: { _id: new mongoose.Types.ObjectId(_id) },
+        },
         {
           $lookup: {
             from: "categories",
@@ -57,22 +149,17 @@ class CategoryController extends Controller {
         {
           $project: {
             __v: 0,
-            "children.__V": 0,
+            "children.__v": 0,
             "children.parent": 0,
           },
         },
       ]);
       return res.status(200).json({
         data: {
+          statusCode: 200,
           category,
         },
       });
-    } catch (error) {
-      next(error);
-    }
-  }
-  async getCategoryById(req, res, next) {
-    try {
     } catch (error) {
       next(error);
     }
@@ -85,6 +172,7 @@ class CategoryController extends Controller {
       );
       return res.status(200).json({
         data: {
+          statusCode: 200,
           parents,
         },
       });
@@ -101,7 +189,25 @@ class CategoryController extends Controller {
       );
       res.status(200).json({
         data: {
+          statusCode: 200,
           children,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async getAllCategoryWithoutPopulate(req, res, next) {
+    try {
+      const categories = await CategoryModel.aggregate([
+        {
+          $match: {},
+        },
+      ]);
+      return res.status(200).json({
+        data: {
+          statusCode: 200,
+          categories,
         },
       });
     } catch (error) {

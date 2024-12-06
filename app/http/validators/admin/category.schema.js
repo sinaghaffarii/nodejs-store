@@ -13,6 +13,14 @@ const addCategorySchema = Joi.object().keys({
     .error(new Error("شناسه وارد شده صحیح نمیباشد")),
 });
 
+const updateCategorySchema = Joi.object().keys({
+  title: Joi.string()
+    .min(3)
+    .max(30)
+    .error(new Error("عنوان دسته بندی درست نمیباشد.")),
+});
+
 module.exports = {
   addCategorySchema,
+  updateCategorySchema,   
 };
