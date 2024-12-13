@@ -1,5 +1,6 @@
 module.exports = Object.freeze({
-  MongoIDPattern: /^(?=[a-fd]{24}$)(d+[a-f]|[a-f]+d)/i,
+  // MongoIDPattern: /^(?=[a-fd]{24}$)(d+[a-f]|[a-f]+d)/i,
+  MongoIDPattern: /^[a-f0-9]{24}$/i,
   RULES: {
     USER: "USER",
     ADMIN: "ADMIN",

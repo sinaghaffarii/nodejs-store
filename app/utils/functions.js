@@ -6,6 +6,8 @@ const {
   REFRESH_TOKEN_SECRET_KEY,
 } = require("./constants");
 const { RefreshTokenModel } = require("../models/refreshToken");
+const path = require("path");
+const fs = require("fs");
 
 function RandomNumberGenerator() {
   return Math.floor(10000 + Math.random() * 90000);
@@ -64,9 +66,15 @@ function verifyRefreshToken(token) {
   });
 }
 
+function deleteFileInPublic(fileAddress) {
+  const pathFile = path.join(__dirname, "..", "..", "public", fileAddress);
+  fs.unlinkSync(pathFile);
+}
+
 module.exports = {
   RandomNumberGenerator,
   signAccessToken,
   signRefreshToken,
   verifyRefreshToken,
+  deleteFileInPublic,
 };
