@@ -16,6 +16,7 @@ class BlogController extends Controller {
 
       const { title, text, short_text, category, tegs } = blogDataBody;
       const image = req.body.image;
+      const author = req.user._id;
       const blog = await BlogModel.create({
         title,
         text,
@@ -23,10 +24,17 @@ class BlogController extends Controller {
         category,
         tegs,
         image,
+        author,
       });
-      return res.json({blog});
+      return res.status(201).json({
+        data: {
+          statusCode: 201,
+          message: "ایجاد بلاگ با موفقیت انجام شد.",
+          result: { blog },
+        },
+      });
     } catch (error) {
-      deleteFileInPublic(req.body.image)
+      deleteFileInPublic(req.body.image);
       next(error);
     }
   }
@@ -38,10 +46,46 @@ class BlogController extends Controller {
   }
   async getListOfBlogs(req, res, next) {
     try {
+      const blogs = await BlogModel.aggregate([
+        { $match: {} },
+        {
+          $lookup: {
+            from: "users",
+            foreignField: "_id",
+            localField: "author",
+            as: "author",
+          },
+        },
+        {
+          $unwind: "$author", // برای تبدیل آرایه کاربران به آبجکت
+        },
+        {
+          $lookup: {
+            from: "categories",
+            foreignField: "_id",
+            localField: "category",
+            as: "category",
+          },
+        },
+        {
+          $unwind: "$category",
+        },
+        {
+          $project: {
+            "author.__v": 0,
+            "category.__v": 0,
+            "author.otp": 0,
+            "author.Roles": 0,
+            "author.discount": 0,
+            "author.bills": 0,
+          },
+        },
+      ]);
       return res.status(200).json({
         statusCode: 200,
         data: {
-          blogs: [],
+          blogs,
+          totalCount: blogs.length,
         },
       });
     } catch (error) {
