@@ -15,7 +15,7 @@ const router = require("express").Router();
  *          parameters:
  *              -   in: header
  *                  example: Bearer <Token>
- *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDIwMzA2NSwiZXhwIjoxNzM0MjA2NjY1fQ.    ijUzLDUqPVu38dPez7KiRU5bFNj0faqcnkhw201j1lk
+ *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDMwMTM4NiwiZXhwIjoxNzM0MzA4NTg2fQ.WSvKAPWMY9XLUqoOwUO0_08Qd2DMYC_L-b-lZYk2L8Y
  *                  name: access-token
  *                  type: string
  *                  required: true
@@ -37,7 +37,7 @@ router.get("/", AdminBlogController.getListOfBlogs);
  *          parameters:
  *              -   in: header
  *                  example: Bearer <Token>
- *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDIwMzA2NSwiZXhwIjoxNzM0MjA2NjY1fQ.    ijUzLDUqPVu38dPez7KiRU5bFNj0faqcnkhw201j1lk
+ *                  value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDMwMTM4NiwiZXhwIjoxNzM0MzA4NTg2fQ.WSvKAPWMY9XLUqoOwUO0_08Qd2DMYC_L-b-lZYk2L8Y
  *                  name: access-token
  *                  type: string
  *                  required: true
@@ -81,6 +81,53 @@ router.post(
   stringToArray("tags"),
   AdminBlogController.createBlog
 );
+
+/**
+ * @swagger
+ *  /admin/blogs/{id}:
+ *       get:
+ *          tags: [Blog(AdminPanel)]
+ *          summary: get blog by ID and populate this field
+ *          parameters:
+ *              -   in: header
+ *                  example: Bearer <Token>
+ *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDMwMTM4NiwiZXhwIjoxNzM0MzA4NTg2fQ.WSvKAPWMY9XLUqoOwUO0_08Qd2DMYC_L-b-lZYk2L8Y
+ *                  name: access-token
+ *                  type: string
+ *                  required: true
+ *              -   in: path
+ *                  name: id
+ *                  type: string
+ *                  required: true
+ *          responses:
+ *              200:
+ *                  description: Success
+ */
+
+router.get("/:id", AdminBlogController.getOneBlogById);
+/**
+ * @swagger
+ *  /admin/blogs/{id}:
+ *       delete:
+ *          tags: [Blog(AdminPanel)]
+ *          summary: remove blog by ID
+ *          parameters:
+ *              -   in: header
+ *                  example: Bearer <Token>
+ *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDMwMTM4NiwiZXhwIjoxNzM0MzA4NTg2fQ.WSvKAPWMY9XLUqoOwUO0_08Qd2DMYC_L-b-lZYk2L8Y
+ *                  name: access-token
+ *                  type: string
+ *                  required: true
+ *              -   in: path
+ *                  name: id
+ *                  type: string
+ *                  required: true
+ *          responses:
+ *              200:
+ *                  description: Success
+ */
+
+router.delete("/:id", AdminBlogController.deleteBlogById);
 
 module.exports = {
   BlogAdminApiRoutes: router,

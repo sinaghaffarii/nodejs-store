@@ -21,7 +21,7 @@ function signAccessToken(userId) {
     };
     const secret = ACCESS_TOKEN_SECRET_KEY;
     const options = {
-      expiresIn: "1h",
+      expiresIn: "2h",
     };
     JWT.sign(payload, secret, options, (error, token) => {
       if (error) reject(createError.InternalServerError("خطای سمت سرور"));
@@ -58,7 +58,7 @@ function verifyRefreshToken(token) {
       const user = await UserModel.findOne({ mobile }, { password: 0, otp: 0 });
       if (!user) reject(createError.Unauthorized("حساب کاربری یافت نشد."));
       const refreshToken = await RefreshTokenModel.findOne({
-        userId: user._id,
+        userId: user?._id || "key_default",
       });
       if (refreshToken?.token === token) return resolve(mobile);
       reject(createError.Unauthorized("ورود مجدد به حساب کاربری انجام نشد."));
