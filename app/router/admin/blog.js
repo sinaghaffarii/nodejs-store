@@ -15,7 +15,7 @@ const router = require("express").Router();
  *          parameters:
  *              -   in: header
  *                  example: Bearer <Token>
- *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDMwMTM4NiwiZXhwIjoxNzM0MzA4NTg2fQ.WSvKAPWMY9XLUqoOwUO0_08Qd2DMYC_L-b-lZYk2L8Y
+ *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDUxNTEyMiwiZXhwIjoxNzM0NTIyMzIyfQ.QGejYiOfqy6O8w8-QU6psXN7gTIZsqbITTN0e17w6p8
  *                  name: access-token
  *                  type: string
  *                  required: true
@@ -37,7 +37,7 @@ router.get("/", AdminBlogController.getListOfBlogs);
  *          parameters:
  *              -   in: header
  *                  example: Bearer <Token>
- *                  value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDMwMTM4NiwiZXhwIjoxNzM0MzA4NTg2fQ.WSvKAPWMY9XLUqoOwUO0_08Qd2DMYC_L-b-lZYk2L8Y
+ *                  value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDUxNTEyMiwiZXhwIjoxNzM0NTIyMzIyfQ.QGejYiOfqy6O8w8-QU6psXN7gTIZsqbITTN0e17w6p8
  *                  name: access-token
  *                  type: string
  *                  required: true
@@ -84,6 +84,59 @@ router.post(
 
 /**
  * @swagger
+ * /admin/blogs/update/{id}:
+ *      patch:
+ *          tags: [Blog(AdminPanel)]
+ *          summary: Update a blog by id
+ *          consumes:
+ *              - multipart/form-data
+ *          parameters:
+ *              -   in: header
+ *                  example: Bearer <Token>
+ *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDUxNTEyMiwiZXhwIjoxNzM0NTIyMzIyfQ.QGejYiOfqy6O8w8-QU6psXN7gTIZsqbITTN0e17w6p8
+ *                  name: access-token
+ *                  type: string
+ *              -   in: path
+ *                  required: true
+ *                  name: id
+ *                  type: string
+ *              -   in: formData
+ *                  name: title
+ *                  type: string
+ *              -   in: formData
+ *                  name: text
+ *                  type: string
+ *              -   in: formData
+ *                  name: short_text
+ *                  type: string
+ *              -   in: formData
+ *                  name: tags
+ *                  example: tag1#tag2#tag3_foo#foo_bar || str || undefined
+ *                  type: string
+ *              -   in: formData
+ *                  name: category
+ *                  type: string
+ *              -   in: formData
+ *                  name: image
+ *                  type: file
+ *          responses:
+ *              201:
+ *                  description: Created successfully!
+ *              400:
+ *                  description: Bad Request - Invalid input.
+ *              500:
+ *                  description: Internal Server Error.
+ */
+
+router.patch(
+  "/update/:id",
+  uploadFile.single("image"),
+  stringToArray("tags"),
+  AdminBlogController.updateBlogById
+);
+
+/**
+ * @swagger
  *  /admin/blogs/{id}:
  *       get:
  *          tags: [Blog(AdminPanel)]
@@ -91,7 +144,7 @@ router.post(
  *          parameters:
  *              -   in: header
  *                  example: Bearer <Token>
- *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDMwMTM4NiwiZXhwIjoxNzM0MzA4NTg2fQ.WSvKAPWMY9XLUqoOwUO0_08Qd2DMYC_L-b-lZYk2L8Y
+ *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDUxNTEyMiwiZXhwIjoxNzM0NTIyMzIyfQ.QGejYiOfqy6O8w8-QU6psXN7gTIZsqbITTN0e17w6p8
  *                  name: access-token
  *                  type: string
  *                  required: true
@@ -114,7 +167,7 @@ router.get("/:id", AdminBlogController.getOneBlogById);
  *          parameters:
  *              -   in: header
  *                  example: Bearer <Token>
- *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDMwMTM4NiwiZXhwIjoxNzM0MzA4NTg2fQ.WSvKAPWMY9XLUqoOwUO0_08Qd2DMYC_L-b-lZYk2L8Y
+ *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDUxNTEyMiwiZXhwIjoxNzM0NTIyMzIyfQ.QGejYiOfqy6O8w8-QU6psXN7gTIZsqbITTN0e17w6p8
  *                  name: access-token
  *                  type: string
  *                  required: true

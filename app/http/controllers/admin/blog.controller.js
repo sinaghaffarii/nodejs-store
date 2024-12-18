@@ -31,7 +31,7 @@ class BlogController extends Controller {
         data: {
           statusCode: 201,
           message: "ایجاد بلاگ با موفقیت انجام شد.",
-          result: { blog },
+          blog,
         },
       });
     } catch (error) {
@@ -126,6 +126,41 @@ class BlogController extends Controller {
   }
   async updateBlogById(req, res, next) {
     try {
+      const { id } = req.params;
+      await this.findBlog({ _id: id });
+      if (req?.body?.fileUploadPath && req?.body?.filename) {
+        req.body.image = path.join(req.body.fileUploadPath, req.body.filename);
+        req.body.image = req.body.image.replace(/\\/g, "/");
+      }
+      const data = req.body;
+      let nullishData = ["", " ", "0", 0, null, undefined];
+      let blackListFields = [
+        "comments",
+        "likes",
+        "deslikes",
+        "bookmarks",
+        "author",
+      ];
+      Object.keys(data).forEach((key) => {
+        if (blackListFields.includes(key)) delete data[key];
+        if (typeof data[key] == "string") data[key] = data[key].trim();
+        if (Array.isArray(data[key]) && Array.length > 0)
+          data[key] = data[key].map((item) => item.trim());
+        if (nullishData.includes(data[key])) delete data[key];
+      });
+      const updateResult = await BlogModel.updateOne(
+        { _id: id },
+        { $set: data }
+      );
+      if (updateResult.modifiedCount == 0)
+        throw createHttpError.InternalServerError("بروز رسانی انجام نشد.");
+      return res.status(200).json({
+        data: {
+          statusCode: 200,
+          message: "بروز رسانی بلاگ با موفقیت انجام شد.",
+          updateResult,
+        },
+      });
     } catch (error) {
       next(error);
     }
