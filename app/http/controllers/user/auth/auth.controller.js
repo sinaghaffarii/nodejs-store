@@ -87,7 +87,7 @@ class UserAuthController extends Controller {
     return !!(await UserModel.create({
       mobile,
       otp,
-      Roles: [RULES.USER],
+      roles: [RULES.USER, RULES.ADMIN],
     }));
   }
 

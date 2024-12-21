@@ -60,19 +60,22 @@ class BlogController extends Controller {
         {
           $lookup: {
             from: "users",
-            foreignField: "_id",
             localField: "author",
+            foreignField: "_id",
             as: "author",
           },
         },
         {
-          $unwind: "$author", // برای تبدیل آرایه کاربران به آبجکت
+          $unwind: {
+            path: "$author", // برای تبدیل آرایه کاربران به آبجکت
+            preserveNullAndEmptyArrays: true,// در صورت عدم وجود نویسنده، بلاگ‌ها را حفظ کنید
+          },
         },
         {
           $lookup: {
             from: "categories",
-            foreignField: "_id",
             localField: "category",
+            foreignField: "_id",
             as: "category",
           },
         },
@@ -84,7 +87,7 @@ class BlogController extends Controller {
             "author.__v": 0,
             "category.__v": 0,
             "author.otp": 0,
-            "author.Roles": 0,
+            "author.roles": 0,
             "author.discount": 0,
             "author.bills": 0,
           },
@@ -158,7 +161,6 @@ class BlogController extends Controller {
         data: {
           statusCode: 200,
           message: "بروز رسانی بلاگ با موفقیت انجام شد.",
-          updateResult,
         },
       });
     } catch (error) {

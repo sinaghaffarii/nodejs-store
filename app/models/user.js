@@ -1,4 +1,5 @@
 const { default: mongoose, mongo } = require("mongoose");
+const { RULES } = require("../utils/constants");
 
 const Schema = new mongoose.Schema({
   first_name: { type: String },
@@ -17,6 +18,7 @@ const Schema = new mongoose.Schema({
   bills: { type: [], default: [] },
   discount: { type: Number, default: 0 },
   birthday: { type: String },
+  roles: { type: [String], default: [RULES.USER] },
 });
 
 module.exports = {
