@@ -68,7 +68,7 @@ class BlogController extends Controller {
         {
           $unwind: {
             path: "$author", // برای تبدیل آرایه کاربران به آبجکت
-            preserveNullAndEmptyArrays: true,// در صورت عدم وجود نویسنده، بلاگ‌ها را حفظ کنید
+            // preserveNullAndEmptyArrays: true,// در صورت عدم وجود نویسنده، بلاگ‌ها را حفظ کنید
           },
         },
         {
@@ -101,6 +101,7 @@ class BlogController extends Controller {
         },
       });
     } catch (error) {
+      console.error(error);
       next(error);
     }
   }

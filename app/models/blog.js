@@ -1,4 +1,4 @@
-const { default: mongoose, mongo } = require("mongoose");
+const { default: mongoose } = require("mongoose");
 
 const CommentSchema = new mongoose.Schema({
   user: { type: mongoose.Types.ObjectId, ref: "user", required: true },
@@ -15,11 +15,15 @@ const Schema = new mongoose.Schema(
     text: { type: String, required: true },
     image: { type: String, required: true },
     tags: { type: [String], default: [] },
-    category: { type: [mongoose.Types.ObjectId],ref: "category" , required: true },
+    category: {
+      type: [mongoose.Types.ObjectId],
+      ref: "category",
+      required: true,
+    },
     comments: { type: [CommentSchema], default: [] },
-    likes: { type: [mongoose.Types.ObjectId], ref: "users", default: [] },
-    deslikes: { type: [mongoose.Types.ObjectId], ref: "users", default: [] },
-    bookmarks: { type: [mongoose.Types.ObjectId], ref: "users", default: [] },
+    likes: { type: [mongoose.Types.ObjectId], ref: "user", default: [] },
+    deslikes: { type: [mongoose.Types.ObjectId], ref: "user", default: [] },
+    bookmarks: { type: [mongoose.Types.ObjectId], ref: "user", default: [] },
   },
   {
     timestamps: true,
