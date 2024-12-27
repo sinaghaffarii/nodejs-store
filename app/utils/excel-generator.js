@@ -36,7 +36,6 @@ const months = [
 
 router.get("/download-excel/:month", async (req, res) => {
   const { month } = req.params;
-  console.log("month:::::::::", month);
   if (!month || isNaN(month) || month < 1 || month > 12) {
     return res
       .status(400)

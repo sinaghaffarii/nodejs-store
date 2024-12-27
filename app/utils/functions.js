@@ -53,12 +53,14 @@ function signRefreshToken(userId) {
 function verifyRefreshToken(token) {
   return new Promise((resolve, reject) => {
     JWT.verify(token, REFRESH_TOKEN_SECRET_KEY, async (error, payload) => {
-      if (error) reject(createError.Unauthorized("وارد حساب کاربری خود شوید"));
+      if (error)
+        return reject(createError.Unauthorized("وارد حساب کاربری خود شوید"));
       const { mobile } = payload || {};
       const user = await UserModel.findOne({ mobile }, { password: 0, otp: 0 });
-      if (!user) reject(createError.Unauthorized("حساب کاربری یافت نشد."));
+      if (!user)
+        return reject(createError.Unauthorized("حساب کاربری یافت نشد."));
       const refreshToken = await RefreshTokenModel.findOne({
-        userId: user?._id || "key_default",
+        userId: user?._id,
       });
       if (refreshToken?.token === token) return resolve(mobile);
       reject(createError.Unauthorized("ورود مجدد به حساب کاربری انجام نشد."));

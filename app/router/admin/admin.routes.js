@@ -15,7 +15,7 @@ const router = require("express").Router();
  *        description: made blog management admin panel
  */
 
-router.use("/category", CategoryRoutes);
+router.use("/category",verifyAccessToken, CategoryRoutes);
 
 router.use("/blogs", verifyAccessToken , BlogAdminApiRoutes);
 

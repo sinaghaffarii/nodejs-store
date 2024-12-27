@@ -56,11 +56,10 @@ class UserAuthController extends Controller {
       next(error);
     }
   }
-
   async refreshToken(req, res, next) {
     try {
-      const { refreshToken } = req.body;
-      const mobile = await verifyRefreshToken(refreshToken);
+      const { refresh_token } = req.body;
+      const mobile = await verifyRefreshToken(refresh_token);
       const user = await UserModel.findOne({ mobile });
       const accessToken = await signAccessToken(user._id);
       const newRefreshToken = await signRefreshToken(user._id);

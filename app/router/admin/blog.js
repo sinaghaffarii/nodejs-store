@@ -6,19 +6,48 @@ const { stringToArray } = require("../../http/middlewares/stringToArray");
 
 const router = require("express").Router();
 
+
+/**
+ * @swagger
+ *  components:
+ *      schemas:
+ *          Blog:
+ *              type: object
+ *              required:
+ *                  -   title
+ *                  -   short_text
+ *                  -   text
+ *                  -   tags
+ *                  -   category
+ *                  -   image
+ *              properties:
+ *                  title:
+ *                    type: string
+ *                    description: the title of category
+ *                  short_text:
+ *                    type: string
+ *                    description: the summary of text of blog
+ *                  text:
+ *                    type: string
+ *                    description: the text of blog
+ *                  tags:
+ *                    type: string
+ *                    description: the list of tags for example = tag1#tag2#tag3_foo#foo_bar
+ *                  category:
+ *                    type: string
+ *                    description: the id of category for foreign field in blog
+ *                  image:
+ *                    type: string
+ *                    format: binary
+ *                    description: the index picture of blog
+ */
+
 /**
  * @swagger
  * /admin/blogs:
  *      get:
  *          tags: [Blog(AdminPanel)]
  *          summary: get all blogs
- *          parameters:
- *              -   in: header
- *                  example: Bearer <Token>
- *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDUxNTEyMiwiZXhwIjoxNzM0NTIyMzIyfQ.QGejYiOfqy6O8w8-QU6psXN7gTIZsqbITTN0e17w6p8
- *                  name: access-token
- *                  type: string
- *                  required: true
  *          responses:
  *              200:
  *                 description: success - get array of blogs
@@ -26,46 +55,20 @@ const router = require("express").Router();
 
 router.get("/", AdminBlogController.getListOfBlogs);
 
+
+
 /**
  * @swagger
  * /admin/blogs/add:
  *      post:
  *          tags: [Blog(AdminPanel)]
  *          summary: Create a blog
- *          consumes:
- *              - multipart/form-data
- *          parameters:
- *              -   in: header
- *                  example: Bearer <Token>
- *                  value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDUxNTEyMiwiZXhwIjoxNzM0NTIyMzIyfQ.QGejYiOfqy6O8w8-QU6psXN7gTIZsqbITTN0e17w6p8
- *                  name: access-token
- *                  type: string
- *                  required: true
- *              -   in: formData
- *                  name: title
- *                  required: true
- *                  type: string
- *              -   in: formData
- *                  name: text
- *                  required: true
- *                  type: string
- *              -   in: formData
- *                  name: short_text
- *                  required: true
- *                  type: string
- *              -   in: formData
- *                  name: tags
- *                  example: tag1#tag2#tag3_foo#foo_bar || str || undefined
- *                  required: true
- *                  type: string
- *              -   in: formData
- *                  name: category
- *                  required: true
- *                  type: string
- *              -   in: formData
- *                  name: image
- *                  required: true
- *                  type: file
+ *          requestBody:
+*              required: true
+*              content:
+*                  multipart/form-data:
+*                      schema:
+*                          $ref: '#/components/schemas/Blog'
  *          responses:
  *              201:
  *                  description: Created successfully!
@@ -91,11 +94,6 @@ router.post(
  *          consumes:
  *              - multipart/form-data
  *          parameters:
- *              -   in: header
- *                  example: Bearer <Token>
- *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDUxNTEyMiwiZXhwIjoxNzM0NTIyMzIyfQ.QGejYiOfqy6O8w8-QU6psXN7gTIZsqbITTN0e17w6p8
- *                  name: access-token
- *                  type: string
  *              -   in: path
  *                  required: true
  *                  name: id
@@ -142,12 +140,6 @@ router.patch(
  *          tags: [Blog(AdminPanel)]
  *          summary: get blog by ID and populate this field
  *          parameters:
- *              -   in: header
- *                  example: Bearer <Token>
- *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDUxNTEyMiwiZXhwIjoxNzM0NTIyMzIyfQ.QGejYiOfqy6O8w8-QU6psXN7gTIZsqbITTN0e17w6p8
- *                  name: access-token
- *                  type: string
- *                  required: true
  *              -   in: path
  *                  name: id
  *                  type: string
@@ -165,12 +157,6 @@ router.get("/:id", AdminBlogController.getOneBlogById);
  *          tags: [Blog(AdminPanel)]
  *          summary: remove blog by ID
  *          parameters:
- *              -   in: header
- *                  example: Bearer <Token>
- *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2JpbGUiOiIwOTkxMjUwODI1NSIsImlhdCI6MTczNDUxNTEyMiwiZXhwIjoxNzM0NTIyMzIyfQ.QGejYiOfqy6O8w8-QU6psXN7gTIZsqbITTN0e17w6p8
- *                  name: access-token
- *                  type: string
- *                  required: true
  *              -   in: path
  *                  name: id
  *                  type: string

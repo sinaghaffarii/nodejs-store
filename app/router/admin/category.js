@@ -6,19 +6,36 @@ const router = require("express").Router();
 
 /**
  * @swagger
+ *  components:
+ *      schemas:
+ *          Category:
+ *              type: object
+ *              required:
+ *                  -   title
+ *              properties:
+ *                  title:
+ *                    type: string
+ *                    description: the title of category
+ *                  parent:
+ *                    type: string
+ *                    description:  the parent of category
+ */
+
+/**
+ * @swagger
  *  /admin/category/add:
  *      post:
  *          tags: ["Category(AdminPanel)"]
  *          summary: create new category title
- *          parameters:
- *          -  name: title
- *             type: string
- *             requird: true
- *             in: formData
- *          -  name: parent
- *             type: string
- *             require: false
- *             in: formData
+ *          requestBody:
+ *               required: true
+ *               content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                          $ref: "#/components/schemas/Category"
+ *                  application/json:
+ *                      schema:
+ *                          $ref: "#/components/schemas/Category"
  *          responses:
  *              201:
  *                  description: success

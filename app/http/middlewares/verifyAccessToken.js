@@ -5,7 +5,7 @@ const { UserModel } = require("../../models/user");
 const createHttpError = require("http-errors");
 
 function getToken(headers) {
-  const [bearer, token] = headers?.["access-token"]?.split(" ") || [];
+  const [bearer, token] = headers?.authorization?.split(" ") || [];
   if (token && ["bearer", "Bearer"].includes(bearer)) return token;
   throw createHttpError.Unauthorized(
     "حساب کاربری شناسایی نشد، لطفا وارد حساب کاربری خود شوید."
