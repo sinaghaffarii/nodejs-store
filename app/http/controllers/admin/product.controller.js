@@ -1,5 +1,8 @@
 const { ProductModel } = require("../../../models/product");
-const { deleteFileInPublic } = require("../../../utils/functions");
+const {
+  deleteFileInPublic,
+  ListOfImagesFromRequest,
+} = require("../../../utils/functions");
 const {
   createProductSchema,
 } = require("../../validators/admin/product.schema");
@@ -9,12 +12,21 @@ const path = require("path");
 class ProductController extends Controller {
   async addProduct(req, res, next) {
     try {
-      const productBody = await createProductSchema.validateAsync(req.body);
-      req.body.image = path.join(
-        productBody.fileUploadPath,
-        productBody.filename
+      const images = ListOfImagesFromRequest(
+        req?.files,
+        req.body.fileUploadPath
       );
-      const image = req.body.image.replace(/\\/g, "/");
+
+      const productBody = await createProductSchema.validateAsync(req.body);
+
+      // ---------- for single Upload file
+      // req.body.image = path.join(
+      // productBody.fileUploadPath,
+      // productBody.filename
+      // );
+      // const image = req.body.image.replace(/\\/g, "/");
+      // ---------- end of single Upload file
+
       const {
         title,
         text,
@@ -53,7 +65,7 @@ class ProductController extends Controller {
         count,
         price,
         discount,
-        image,
+        images,
         feature,
         supplier,
         type,

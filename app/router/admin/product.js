@@ -21,7 +21,7 @@ const router = require("express").Router();
  *                  -   price
  *                  -   discount
  *                  -   count
- *                  -   image
+ *                  -   images
  *              properties:
  *                  title:
  *                       type: string
@@ -47,9 +47,11 @@ const router = require("express").Router();
  *                  count:
  *                       type: string
  *                       description: the title of product
- *                  image:
- *                       type: file
- *                       description: the title of product
+ *                  images:
+ *                        type: array
+ *                        items:
+ *                            type: file
+ *                            collectionFormat: multi
  *                  height:
  *                       type: string
  *                       description: the height of product packet
@@ -82,9 +84,11 @@ const router = require("express").Router();
  *          description: Created New Product
  */
 
+// uploadFile.single("image"),
+// دومین پارامتر مربوط به حداکثر تعداد عکس ها میباشد
 router.post(
   "/add",
-  uploadFile.single("image"),
+  uploadFile.array("images", 10),
   stringToArray("tags"),
   ProductController.addProduct
 );
@@ -109,3 +113,7 @@ router.get("/list", ProductController.getAllProduct);
 module.exports = {
   ProductAdminApiRoutes: router,
 };
+
+// *                  image:
+// *                       type: file
+// *                       description: the title of product
