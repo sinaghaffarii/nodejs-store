@@ -10,6 +10,7 @@ const {
 const { ObjectIdValidator } = require("../../validators/public.validator");
 const Controller = require("../controller");
 const path = require("path");
+const { StatusCodes: HttpStatus } = require("http-status-codes");
 
 class ProductController extends Controller {
   async addProduct(req, res, next) {
@@ -75,9 +76,9 @@ class ProductController extends Controller {
         supplier,
         type,
       });
-      return res.json({
+      return res.status(HttpStatus.CREATED).json({
         data: {
-          statusCode: 201,
+          statusCode: HttpStatus.CREATED,
           message: "ثبت محصول با موفقیت افزوده شد.",
           product,
         },
@@ -102,8 +103,8 @@ class ProductController extends Controller {
       });
       if (removeProductResult.deletedCount == 0)
         throw createHttpError.InternalServerError("");
-      return res.status(200).json({
-        statusCode: 200,
+      return res.status(HttpStatus.OK).json({
+        statusCode: HttpStatus.OK,
         message: "حذف محصول با موفقیت انجام شد.",
       });
     } catch (error) {
@@ -113,9 +114,9 @@ class ProductController extends Controller {
   async getAllProduct(req, res, next) {
     try {
       const products = await ProductModel.find({});
-      return res.status(200).json({
+      return res.status(HttpStatus.OK).json({
         data: {
-          statusCode: 200,
+          statusCode: HttpStatus.OK,
           totalCount: products.length,
           products,
         },
@@ -128,8 +129,8 @@ class ProductController extends Controller {
     try {
       const { id } = req.params;
       const product = await this.findProductById(id);
-      return res.status(200).json({
-        statusCode: 200,
+      return res.status(HttpStatus.OK).json({
+        statusCode: HttpStatus.OK,
         product,
       });
     } catch (error) {

@@ -21,9 +21,9 @@ class UserAuthController extends Controller {
       const code = RandomNumberGenerator();
       const result = await this.saveUser(mobile, code);
       if (!result) throw createError.Unauthorized("ورود شما با خطا مواجه شد.");
-      return res.status(200).send({
+      return res.status(HttpStatus.OK).send({
         data: {
-          statusCode: 200,
+          statusCode: HttpStatus.OK,
           message: "کد اعتبار سنجی با موفقیت برای شما ارسال شد.",
           code,
           mobile,
