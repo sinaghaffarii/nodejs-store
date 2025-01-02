@@ -24,7 +24,7 @@ const Schema = new mongoose.Schema({
       length: "",
       height: "",
       width: "",
-      weight: "",
+      weight: "", 
       colors: [],
       model: [],
       madein: "",

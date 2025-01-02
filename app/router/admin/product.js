@@ -22,6 +22,8 @@ const router = require("express").Router();
  *                  -   discount
  *                  -   count
  *                  -   images
+ *                  -   type
+ *                  -   colors
  *              properties:
  *                  title:
  *                       type: string
@@ -64,6 +66,17 @@ const router = require("express").Router();
  *                  length:
  *                       type: string
  *                       description: the length of product packet
+ *                  type:
+ *                       type: string
+ *                       example: virtual or physics
+ *                       description: the type of product
+ *                  colors:
+ *                        type: array
+ *                        description: A list of colors selected for the product
+ *                        items:
+ *                            type: string
+ *                            enum: [red, green, blue, yellow, purple]
+ *                        example: ["red", "blue"]
  */
 
 /**
@@ -90,6 +103,7 @@ router.post(
   "/add",
   uploadFile.array("images", 10),
   stringToArray("tags"),
+  stringToArray("colors"),
   ProductController.addProduct
 );
 /**
@@ -105,9 +119,46 @@ router.post(
  */
 
 router.get("/list", ProductController.getAllProduct);
+
+/**
+ * @swagger
+ *    /admin/products/{id}:
+ *      get:
+ *        tags:
+ *          - Product(AdminPanel)
+ *        summary: Get One Products
+ *        parameters:
+ *            -   in: path
+ *                name: id
+ *                type: string
+ *                description: object
+ *        responses:
+ *            200:
+ *              description: success
+ */
+
+router.get("/:id", ProductController.getOneProduct);
+/**
+ * @swagger
+ *    /admin/products/remove/{id}:
+ *      delete:
+ *        tags:
+ *          - Product(AdminPanel)
+ *        summary: Remove One Product
+ *        parameters:
+ *            -   in: path
+ *                name: id
+ *                type: string
+ *                description: object
+ *        responses:
+ *            200:
+ *              description: success
+ */
+
+router.delete("/remove/:id", ProductController.removeProduct);
+
 // router.patch()
 // router.delete()
-// router.get()
 // router.get()
 
 module.exports = {

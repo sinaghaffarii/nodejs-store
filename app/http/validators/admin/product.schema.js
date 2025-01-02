@@ -19,6 +19,23 @@ const createProductSchema = Joi.object({
     .error(
       createHttpError.BadRequest("برچسب ها نمیتواند بیشتر از 20 آیتم باشد.")
     ),
+  colors: Joi.array()
+    .items(Joi.string().valid("red", "green", "blue", "yellow", "purple")) // فقط رنگ‌های مجاز
+    // .min(1)
+    // .max(20)
+    .error((errors) => {
+      return errors.map((err) => {
+        if (err.code === "array.min") {
+          return createHttpError.BadRequest("حداقل یک رنگ باید انتخاب شود.");
+        }
+        if (err.code === "array.max") {
+          return createHttpError.BadRequest(
+            "رنگ‌های انتخابی نمی‌تواند بیشتر از 20 آیتم باشد."
+          );
+        }
+        return createHttpError.BadRequest("رنگ‌های انتخابی نامعتبر است.");
+      });
+    }),
   category: Joi.string()
     .pattern(MongoIDPattern)
     .error(createHttpError.BadRequest("دسته بندی مورد نظر یافت نشد.")),
@@ -43,6 +60,7 @@ const createProductSchema = Joi.object({
   length: Joi.number()
     .allow(null, 0, "0")
     .error(createHttpError.BadRequest("طول وارد شده صحیح نمیباشد.")),
+  type: Joi.string().pattern(/(virtual|physical)/i),
   filename: Joi.string()
     .pattern(/(\.png|\.jpg|\.webp|\.jpeg|\.gif)$/)
     .error(createHttpError.BadRequest("تصویر ارسال شده صحیح نمیباشد")),

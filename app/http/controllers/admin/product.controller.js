@@ -1,3 +1,4 @@
+const createHttpError = require("http-errors");
 const { ProductModel } = require("../../../models/product");
 const {
   deleteFileInPublic,
@@ -6,19 +7,13 @@ const {
 const {
   createProductSchema,
 } = require("../../validators/admin/product.schema");
+const { ObjectIdValidator } = require("../../validators/public.validator");
 const Controller = require("../controller");
 const path = require("path");
 
 class ProductController extends Controller {
   async addProduct(req, res, next) {
     try {
-      const images = ListOfImagesFromRequest(
-        req?.files,
-        req.body.fileUploadPath
-      );
-
-      const productBody = await createProductSchema.validateAsync(req.body);
-
       // ---------- for single Upload file
       // req.body.image = path.join(
       // productBody.fileUploadPath,
@@ -27,6 +22,11 @@ class ProductController extends Controller {
       // const image = req.body.image.replace(/\\/g, "/");
       // ---------- end of single Upload file
 
+      const images = ListOfImagesFromRequest(
+        req?.files || [],
+        req.body.fileUploadPath
+      );
+      const productBody = await createProductSchema.validateAsync(req.body);
       const {
         title,
         text,
@@ -40,21 +40,26 @@ class ProductController extends Controller {
         height,
         weight,
         length,
+        colors,
+        type,
       } = productBody;
       const supplier = req.user._id;
-      let feature = {},
-        type = "physical";
-      if (width || height || weight || length) {
-        if (!width) feature.width = 0;
-        else feature.width = width;
-        if (!height) feature.height = 0;
-        else feature.height = height;
-        if (!weight) feature.weight = 0;
-        else feature.weight = weight;
-        if (!length) feature.length = 0;
-        else feature.length = length;
-      } else {
-        type = "virtual";
+      let feture = {};
+      feture.colors = colors;
+      if (
+        !isNaN(+width) ||
+        !isNaN(+height) ||
+        !isNaN(+weight) ||
+        !isNaN(+length)
+      ) {
+        if (!width) feture.width = 0;
+        else feture.width = +width;
+        if (!height) feture.height = 0;
+        else feture.height = +height;
+        if (!weight) feture.weight = 0;
+        else feture.weight = +weight;
+        if (!length) feture.length = 0;
+        else feture.length = +length;
       }
       const product = await ProductModel.create({
         title,
@@ -66,7 +71,7 @@ class ProductController extends Controller {
         price,
         discount,
         images,
-        feature,
+        feture,
         supplier,
         type,
       });
@@ -90,6 +95,17 @@ class ProductController extends Controller {
   }
   async removeProduct(req, res, next) {
     try {
+      const { id } = req.params;
+      const product = await this.findProductById(id);
+      const removeProductResult = await ProductModel.deleteOne({
+        _id: product._id,
+      });
+      if (removeProductResult.deletedCount == 0)
+        throw createHttpError.InternalServerError("");
+      return res.status(200).json({
+        statusCode: 200,
+        message: "حذف محصول با موفقیت انجام شد.",
+      });
     } catch (error) {
       next(error);
     }
@@ -110,9 +126,21 @@ class ProductController extends Controller {
   }
   async getOneProduct(req, res, next) {
     try {
+      const { id } = req.params;
+      const product = await this.findProductById(id);
+      return res.status(200).json({
+        statusCode: 200,
+        product,
+      });
     } catch (error) {
       next(error);
     }
+  }
+  async findProductById(productID) {
+    const { id } = await ObjectIdValidator.validateAsync({ id: productID });
+    const product = await ProductModel.findById(id);
+    if (!product) throw createHttpError.NotFound("محصولی یافت نشد.");
+    return product;
   }
 }
 
