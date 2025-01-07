@@ -4,7 +4,7 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "tsx ./index.ts"
+    "dev": "nodemon --exec tsx ./index.ts"
   },
   "keywords": [],
   "author": "sina ghaffari",

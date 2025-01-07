@@ -66,11 +66,7 @@ const ProductSchema = new MongooseSchema<IProduct>({
   },
 });
 
-ProductSchema.virtual("category", {
-  ref: "category",
-  localField: "_id",
-  foreignField: "category",
-});
+ProductSchema.index({ title: "text", short_text: "text", text: "text" });
 
 const ProductModel = mongoose.model<IProduct>("product", ProductSchema);
 

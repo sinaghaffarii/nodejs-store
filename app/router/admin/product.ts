@@ -112,6 +112,11 @@ router.post(
  *      tags:
  *        - Product(AdminPanel)
  *      summary: Get All Products
+ *      parameters: 
+ *        - in: query
+ *          name: search
+ *          type: string
+ *          description: text for search in title, text, short_text of (product)
  *      responses:
  *        200:
  *          description: Successfully

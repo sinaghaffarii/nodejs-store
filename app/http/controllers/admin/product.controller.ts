@@ -135,7 +135,9 @@ class ProductController extends Controller {
     next: NextFunction
   ): Promise<void> {
     try {
-      const products = await ProductModel.find({});
+      const search = (req.query.search as string) || "";
+      const query = search ? { $text: { $search: search } } : {};
+      const products = await ProductModel.find(query);
       res.status(StatusCodes.OK).json({
         data: {
           statusCode: StatusCodes.OK,
