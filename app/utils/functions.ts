@@ -106,3 +106,30 @@ export const ListOfImagesFromRequest = (
     return [];
   }
 };
+
+export const copyObject = (object: any) => {
+  return JSON.parse(JSON.stringify(object));
+};
+
+export const setFeatures = (body: any) => {
+  const { width, height, weight, length, colors } = body;
+  let feature = {
+    colors: colors,
+    width: 0,
+    height: 0,
+    weight: 0,
+    length: 0,
+  };
+  if (!isNaN(+width) || !isNaN(+height) || !isNaN(+weight) || !isNaN(+length)) {
+    if (!width) feature.width = 0;
+    else feature.width = +width;
+    if (!height) feature.height = 0;
+    else feature.height = +height;
+    if (!weight) feature.weight = 0;
+    else feature.weight = +weight;
+    if (!length) feature.length = 0;
+    else feature.length = +length;
+  }
+
+  return feature;
+};

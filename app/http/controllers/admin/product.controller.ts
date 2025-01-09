@@ -1,8 +1,10 @@
 import createHttpError from "http-errors";
 import { ProductModel } from "../../../models/product";
 import {
+  copyObject,
   deleteFileInPublic,
   ListOfImagesFromRequest,
+  setFeatures,
 } from "../../../utils/functions";
 import { CreateProductSchema } from "@/http/validators/admin/product.schema";
 import { ObjectIdValidator } from "@/http/validators/public.validator";
@@ -40,36 +42,10 @@ class ProductController extends Controller {
         count,
         price,
         discount,
-        width,
-        height,
-        weight,
-        length,
-        colors,
         type,
       } = productBody;
       const supplier = req.user?._id;
-      let feature = {
-        colors: colors,
-        width: 0,
-        height: 0,
-        weight: 0,
-        length: 0,
-      };
-      if (
-        !isNaN(+width) ||
-        !isNaN(+height) ||
-        !isNaN(+weight) ||
-        !isNaN(+length)
-      ) {
-        if (!width) feature.width = 0;
-        else feature.width = +width;
-        if (!height) feature.height = 0;
-        else feature.height = +height;
-        if (!weight) feature.weight = 0;
-        else feature.weight = +weight;
-        if (!length) feature.length = 0;
-        else feature.length = +length;
-      }
+      let feature = setFeatures(req.body);
       const product = await ProductModel.create({
         title,
         text,
@@ -104,6 +80,34 @@ class ProductController extends Controller {
     next: NextFunction
   ): Promise<void> {
     try {
+      const data = copyObject(req.body);
+      data.images = ListOfImagesFromRequest(
+        Array.isArray(req.files) ? req.files : [],
+        req.body.fileUploadPath
+      );
+      data.feature = setFeatures(req.body);
+      let nullishData = ["", " ", "0", 0, null, undefined];
+      let blackListFields = [
+        "comments",
+        "likes",
+        "dislikes",
+        "bookmarks",
+        "supplier",
+        "colors",
+        "width",
+        "height",
+        "weight",
+        "length",
+      ];
+      Object.keys(data).forEach((key) => {
+        if (blackListFields.includes(key)) delete data[key];
+        if (typeof data[key] == "string") data[key] = data[key].trim();
+        if (Array.isArray(data[key]) && data[key].length > 0)
+          data[key] = data[key].map((item) => item.trim());
+        if (Array.isArray(data[key]) && data[key].length == 0) delete data[key];
+        if (nullishData.includes(data[key])) delete data[key];
+      });
+      res.json(data);
     } catch (error) {
       next(error);
     }

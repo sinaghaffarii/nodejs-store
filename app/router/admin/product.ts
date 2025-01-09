@@ -78,6 +78,68 @@ const router = Router();
  *                        example: ["red", "blue"]
  */
 
+
+/**
+ * @swagger
+ *  components:
+ *      schemas:
+ *          Edit-Product:
+ *              type: object
+ *              properties:
+ *                  title:
+ *                       type: string
+ *                       description: the title of product
+ *                  short_text:
+ *                       type: string
+ *                       description: the title of product
+ *                  text:
+ *                       type: string
+ *                       description: the title of product
+ *                  tags:
+ *                       type: array
+ *                       description: the title of product
+ *                  category:
+ *                       type: string
+ *                       description: the title of product
+ *                  price:
+ *                       type: string
+ *                       description: the title of product
+ *                  discount:
+ *                       type: string
+ *                       description: the title of product
+ *                  count:
+ *                       type: string
+ *                       description: the title of product
+ *                  images:
+ *                        type: array
+ *                        items:
+ *                            type: file
+ *                            collectionFormat: multi
+ *                  height:
+ *                       type: string
+ *                       description: the height of product packet
+ *                  weight:
+ *                       type: string
+ *                       description: the weight of product packet
+ *                  width:
+ *                       type: string
+ *                       description: the width of product packet
+ *                  length:
+ *                       type: string
+ *                       description: the length of product packet
+ *                  type:
+ *                       type: string
+ *                       example: virtual or physics
+ *                       description: the type of product
+ *                  colors:
+ *                        type: array
+ *                        description: A list of colors selected for the product
+ *                        items:
+ *                            type: string
+ *                            enum: [red, green, blue, yellow, purple]
+ *                        example: ["red", "blue"]
+ */
+
 /**
  * @swagger
  *  /admin/products/add:
@@ -112,7 +174,7 @@ router.post(
  *      tags:
  *        - Product(AdminPanel)
  *      summary: Get All Products
- *      parameters: 
+ *      parameters:
  *        - in: query
  *          name: search
  *          type: string
@@ -161,9 +223,37 @@ router.get("/:id", AdminProductController.getOneProduct);
 
 router.delete("/remove/:id", AdminProductController.removeProduct);
 
-// router.patch()
-// router.delete()
-// router.get()
+/**
+ * @swagger
+ *  /admin/products/edit/{id}:
+ *    patch:
+ *      tags:
+ *        - Product(AdminPanel)
+ *      summary: Update Product
+ *      parameters:
+ *            -   in: path
+ *                name: id
+ *                type: string
+ *                required: true
+ *                description: id of product for update product
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          multipart/form-data:
+ *            schema:
+ *              $ref: '#/components/schemas/Edit-Product'
+ *      responses:
+ *        201:
+ *          description: Created New Product
+ */
+
+router.patch(
+  "/edit/:id",
+  uploadFile.array("images", 10),
+  stringToArray("tags"),
+  stringToArray("colors"),
+  AdminProductController.editProduct
+);
 
 export const ProductAdminApiRoutes = router;
 
