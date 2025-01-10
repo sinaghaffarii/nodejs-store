@@ -3,6 +3,7 @@ import { ProductModel } from "../../../models/product";
 import {
   copyObject,
   deleteFileInPublic,
+  deleteInvalidPropertyInObject,
   ListOfImagesFromRequest,
   setFeatures,
 } from "../../../utils/functions";
@@ -12,6 +13,7 @@ import Controller from "../controller";
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { IProduct } from "../../../models/product";
+import { ProductBlackList } from "@/utils/enums";
 
 class ProductController extends Controller {
   async addProduct(
@@ -80,34 +82,29 @@ class ProductController extends Controller {
     next: NextFunction
   ): Promise<void> {
     try {
+      const { id } = req.params;
+      const product = await this.findProductById(id);
       const data = copyObject(req.body);
       data.images = ListOfImagesFromRequest(
         Array.isArray(req.files) ? req.files : [],
         req.body.fileUploadPath
       );
       data.feature = setFeatures(req.body);
-      let nullishData = ["", " ", "0", 0, null, undefined];
-      let blackListFields = [
-        "comments",
-        "likes",
-        "dislikes",
-        "bookmarks",
-        "supplier",
-        "colors",
-        "width",
-        "height",
-        "weight",
-        "length",
-      ];
-      Object.keys(data).forEach((key) => {
-        if (blackListFields.includes(key)) delete data[key];
-        if (typeof data[key] == "string") data[key] = data[key].trim();
-        if (Array.isArray(data[key]) && data[key].length > 0)
-          data[key] = data[key].map((item) => item.trim());
-        if (Array.isArray(data[key]) && data[key].length == 0) delete data[key];
-        if (nullishData.includes(data[key])) delete data[key];
+      let blackListFields = Object.values(ProductBlackList) as string[];
+      deleteInvalidPropertyInObject(data, blackListFields);
+      const updateProductResult = await ProductModel.updateOne(
+        { _id: product._id },
+        { $set: data }
+      );
+      if (updateProductResult.modifiedCount == 0)
+        throw {
+          status: createHttpError.InternalServerError,
+          message: "خطای داخلی",
+        };
+      res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
+        message: "به روز رسانی با موفقیت انجام شد.",
       });
-      res.json(data);
     } catch (error) {
       next(error);
     }

@@ -8,13 +8,13 @@ import { RefreshTokenModel } from "../models/refreshToken";
 import path from "path";
 import fs from "fs";
 
-export const RandomNumberGenerator = (): number => {
+const RandomNumberGenerator = (): number => {
   return Math.floor(10000 + Math.random() * 90000);
 };
 
 const { ACCESS_TOKEN_SECRET_KEY, REFRESH_TOKEN_SECRET_KEY } = ConstantConfig;
 
-export const signAccessToken = (userId: string) => {
+const signAccessToken = (userId: string) => {
   return new Promise(async (resolve, reject) => {
     const user = await UserModel.findById(userId);
     if (!user) return reject(createError.NotFound("کاربر یافت نشد."));
@@ -37,7 +37,7 @@ export const signAccessToken = (userId: string) => {
   });
 };
 
-export const signRefreshToken = (userId: string) => {
+const signRefreshToken = (userId: string) => {
   return new Promise(async (resolve, reject) => {
     const user = await UserModel.findById(userId);
     if (!user) return reject(createError.NotFound("کاربر یافت نشد."));
@@ -58,7 +58,7 @@ export const signRefreshToken = (userId: string) => {
   });
 };
 
-export const verifyRefreshToken = (token: string) => {
+const verifyRefreshToken = (token: string) => {
   return new Promise((resolve, reject) => {
     JWT.verify(
       token,
@@ -83,7 +83,7 @@ export const verifyRefreshToken = (token: string) => {
   });
 };
 
-export const deleteFileInPublic = (fileAddress: string) => {
+const deleteFileInPublic = (fileAddress: string) => {
   if (fileAddress) {
     const pathFile = path.join(__dirname, "..", "..", "public", fileAddress);
     if (fs.existsSync(pathFile)) fs.unlinkSync(pathFile);
@@ -94,10 +94,7 @@ interface File {
   filename: string;
   // Add other properties if necessary, e.g., path: string;
 }
-export const ListOfImagesFromRequest = (
-  files: File[],
-  fileUploadPath: string
-) => {
+const ListOfImagesFromRequest = (files: File[], fileUploadPath: string) => {
   if (files?.length > 0) {
     return files
       .map((file) => path.join(fileUploadPath, file.filename))
@@ -107,11 +104,11 @@ export const ListOfImagesFromRequest = (
   }
 };
 
-export const copyObject = (object: any) => {
+const copyObject = (object: any) => {
   return JSON.parse(JSON.stringify(object));
 };
 
-export const setFeatures = (body: any) => {
+const setFeatures = (body: any) => {
   const { width, height, weight, length, colors } = body;
   let feature = {
     colors: colors,
@@ -132,4 +129,31 @@ export const setFeatures = (body: any) => {
   }
 
   return feature;
+};
+
+const deleteInvalidPropertyInObject = (
+  data: any,
+  blackListFields: string[]
+) => {
+  let nullishData = ["", " ", "0", 0, null, undefined];
+  Object.keys(data).forEach((key) => {
+    if (blackListFields.includes(key)) delete data[key];
+    if (typeof data[key] == "string") data[key] = data[key].trim();
+    if (Array.isArray(data[key]) && data[key].length > 0)
+      data[key] = data[key].map((item) => item.trim());
+    if (Array.isArray(data[key]) && data[key].length == 0) delete data[key];
+    if (nullishData.includes(data[key])) delete data[key];
+  });
+};
+
+export {
+  RandomNumberGenerator,
+  signAccessToken,
+  signRefreshToken,
+  verifyRefreshToken,
+  deleteFileInPublic,
+  ListOfImagesFromRequest,
+  copyObject,
+  setFeatures,
+  deleteInvalidPropertyInObject,
 };

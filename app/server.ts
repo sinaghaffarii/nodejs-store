@@ -52,7 +52,7 @@ export default class Application {
             },
             servers: [
               {
-                url: "http://localhost:5001",
+                url: "http://localhost:5000",
               },
             ],
             components: {
