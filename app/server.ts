@@ -107,18 +107,16 @@ export default class Application {
     this.#app.use((req: Request, res: Response, next: NextFunction) => {
       next(createError.NotFound("صفحه مورد نظر یافت نشد."));
     });
-    this.#app.use(
-      (error: any, req: Request, res: Response, next: NextFunction) => {
-        const serverError = createError.InternalServerError();
-        const statusCode = error.status || serverError.status;
-        const message = error.message || serverError.message;
-        res.status(statusCode).json({
-          errors: {
-            statusCode,
-            message,
-          },
-        });
-      }
-    );
+    this.#app.use((error: any, req: Request, res: Response, next: NextFunction) => {
+      const serverError = createError.InternalServerError();
+      const statusCode = error.status || serverError.status;
+      const message = error.message || serverError.message;
+      res.status(statusCode).json({
+        errors: {
+          statusCode,
+          message,
+        },
+      });
+    });
   }
 }

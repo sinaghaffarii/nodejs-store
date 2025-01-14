@@ -120,10 +120,7 @@ router.delete("/remove/:id", AdminCategoryController.remvoeCategory);
  *
  */
 
-router.get(
-  "/list-of-all",
-  AdminCategoryController.getAllCategoryWithoutPopulate
-);
+router.get("/list-of-all", AdminCategoryController.getAllCategoryWithoutPopulate);
 
 /**
  * @swagger

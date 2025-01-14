@@ -11,17 +11,10 @@ import { StatusCodes } from "http-status-codes";
 const { ObjectId } = mongoose.Types;
 
 class BlogController extends Controller {
-  async createBlog(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async createBlog(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const blogDataBody = await CreateBlogSchema.validateAsync(req.body);
-      req.body.image = path.join(
-        blogDataBody.fileUploadPath,
-        blogDataBody.filename
-      );
+      req.body.image = path.join(blogDataBody.fileUploadPath, blogDataBody.filename);
       req.body.image = req.body.image.replace(/\\/g, "/");
 
       const { title, text, short_text, category, tegs } = blogDataBody;
@@ -48,11 +41,7 @@ class BlogController extends Controller {
       next(error);
     }
   }
-  async getOneBlogById(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getOneBlogById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       const blog = await this.findBlog({ _id: id });
@@ -66,11 +55,7 @@ class BlogController extends Controller {
       next(error);
     }
   }
-  async getListOfBlogs(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getListOfBlogs(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const blogs = await BlogModel.aggregate([
         { $match: {} },
@@ -122,27 +107,18 @@ class BlogController extends Controller {
       next(error);
     }
   }
-  async getCommentsOfBlog(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getCommentsOfBlog(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
     } catch (error) {
       next(error);
     }
   }
-  async deleteBlogById(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async deleteBlogById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       await this.findBlog({ _id: id });
       const result = await BlogModel.deleteOne({ _id: id });
-      if (result.deletedCount == 0)
-        throw createHttpError.InternalServerError("حذف انجام نشد.");
+      if (result.deletedCount == 0) throw createHttpError.InternalServerError("حذف انجام نشد.");
       res.status(StatusCodes.OK).json({
         data: {
           statusCode: StatusCodes.OK,
@@ -153,11 +129,7 @@ class BlogController extends Controller {
       next(error);
     }
   }
-  async updateBlogById(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async updateBlogById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       await this.findBlog({ _id: id });
@@ -168,18 +140,11 @@ class BlogController extends Controller {
       }
       const data = req.body;
       let nullishData = ["", " ", "0", 0, null, undefined];
-      let blackListFields = [
-        "comments",
-        "likes",
-        "dislikes",
-        "bookmarks",
-        "author",
-      ];
+      let blackListFields = ["comments", "likes", "dislikes", "bookmarks", "author"];
       Object.keys(data).forEach((key) => {
         if (blackListFields.includes(key)) delete data[key];
         if (typeof data[key] == "string") data[key] = data[key].trim();
-        if (Array.isArray(data[key]) && Array.length > 0)
-          data[key] = data[key].map((item) => item.trim());
+        if (Array.isArray(data[key]) && Array.length > 0) data[key] = data[key].map((item) => item.trim());
         if (nullishData.includes(data[key])) delete data[key];
       });
 
@@ -189,13 +154,9 @@ class BlogController extends Controller {
         data.category = new ObjectId(data.category);
       }
 
-      const updateResult = await BlogModel.updateOne(
-        { _id: id },
-        { $set: data }
-      );
+      const updateResult = await BlogModel.updateOne({ _id: id }, { $set: data });
 
-      if (updateResult.modifiedCount == 0)
-        throw createHttpError.InternalServerError("بروز رسانی انجام نشد.");
+      if (updateResult.modifiedCount == 0) throw createHttpError.InternalServerError("بروز رسانی انجام نشد.");
       res.status(StatusCodes.OK).json({
         data: {
           statusCode: StatusCodes.OK,

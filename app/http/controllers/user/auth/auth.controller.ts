@@ -1,14 +1,6 @@
 import createError from "http-errors";
-import {
-  GetOtpSchema,
-  CheckOtpSchema,
-} from "@/http/validators/user/auth.schema";
-import {
-  RandomNumberGenerator,
-  signAccessToken,
-  verifyRefreshToken,
-  signRefreshToken,
-} from "../../../../utils/functions";
+import { GetOtpSchema, CheckOtpSchema } from "@/http/validators/user/auth.schema";
+import { RandomNumberGenerator, signAccessToken, verifyRefreshToken, signRefreshToken } from "../../../../utils/functions";
 import { UserModel } from "../../../../models/user";
 import { ConstantConfig } from "@/utils/constants";
 import Controller from "../../controller";
@@ -35,11 +27,7 @@ class UserAuthController extends Controller {
       next(error);
     }
   }
-  async checkOtp(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async checkOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       await CheckOtpSchema.validateAsync(req.body);
       const { mobile, code } = req.body;
@@ -48,11 +36,9 @@ class UserAuthController extends Controller {
         otp: { code: string; expiresIn: number };
       };
       if (!user) throw createError.NotFound("کاربر یافت نشد.");
-      if (user.otp.code != code)
-        throw createError.Unauthorized("کد ارسال شده صحیح نمیباشد.");
+      if (user.otp.code != code) throw createError.Unauthorized("کد ارسال شده صحیح نمیباشد.");
       const now = Date.now();
-      if (+user.otp.expiresIn < now)
-        throw createError.Unauthorized("توکن شما منقضی شده است.");
+      if (+user.otp.expiresIn < now) throw createError.Unauthorized("توکن شما منقضی شده است.");
       const accessToken = await signAccessToken(user._id.toString());
       const refreshToken = await signRefreshToken(user._id.toString());
       res.json({
@@ -65,11 +51,7 @@ class UserAuthController extends Controller {
       next(error);
     }
   }
-  async refreshToken(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async refreshToken(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { refresh_token } = req.body;
       const mobile = await verifyRefreshToken(refresh_token);
@@ -114,13 +96,9 @@ class UserAuthController extends Controller {
 
   async updateUser(mobile: string, objectData: { [key: string]: any } = {}) {
     Object.keys(objectData).forEach((key) => {
-      if (["", " ", 0, null, undefined, "0", NaN].includes(objectData[key]))
-        delete objectData[key];
+      if (["", " ", 0, null, undefined, "0", NaN].includes(objectData[key])) delete objectData[key];
     });
-    const updateResult = await UserModel.updateOne(
-      { mobile },
-      { $set: objectData }
-    );
+    const updateResult = await UserModel.updateOne({ mobile }, { $set: objectData });
     return !!updateResult.modifiedCount;
   }
 }

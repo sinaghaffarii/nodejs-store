@@ -13,7 +13,7 @@ const router = Router();
  *     -  name: Admin-Panel
  *        description: action of admin (add, remove, edit and any do)
  *     -  name: Course(AdminPanel)
- *        description: management course section like manage apisode, chapter and course 
+ *        description: management course section like manage apisode, chapter and course
  *     -  name: Product(AdminPanel)
  *        description: management product routes
  *     -  name: Category(AdminPanel)

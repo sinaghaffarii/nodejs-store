@@ -26,11 +26,7 @@ const router = Router();
  *              200:
  *                  description: success
  */
-const hashPassword = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
+const hashPassword = (req: Request, res: Response, next: NextFunction): void => {
   const { password } = req.params;
   const salt = bcrypt.genSaltSync(10);
   res.json({

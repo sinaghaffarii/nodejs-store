@@ -5,7 +5,6 @@ import { Router } from "express";
 
 const router = Router();
 
-
 /**
  * @swagger
  *   components:
@@ -104,12 +103,7 @@ router.get("/list", AdminCourseController.getListOfCourses); // get all course
  *           description: Internal Server Error.
  */
 
-router.post(
-  "/add",
-  uploadFile.single("image"),
-  stringToArray("tags"),
-  AdminCourseController.addCourse
-);
+router.post("/add", uploadFile.single("image"), stringToArray("tags"), AdminCourseController.addCourse);
 
 // router.put() // create new chapter
 // router.put() // create new episode

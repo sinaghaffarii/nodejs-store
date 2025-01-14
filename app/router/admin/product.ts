@@ -78,7 +78,6 @@ const router = Router();
  *                        example: ["red", "blue"]
  */
 
-
 /**
  * @swagger
  *  components:

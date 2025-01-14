@@ -16,11 +16,7 @@ import { IProduct } from "../../../models/product";
 import { ProductBlackList } from "@/utils/enums";
 
 class ProductController extends Controller {
-  async addProduct(
-    req: Request<{}, {}, IProduct>,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async addProduct(req: Request<{}, {}, IProduct>, res: Response, next: NextFunction): Promise<void> {
     try {
       // ---------- for single Upload file
       // req.body.image = path.join(
@@ -30,22 +26,9 @@ class ProductController extends Controller {
       // const image = req.body.image.replace(/\\/g, "/");
       // ---------- end of single Upload file
 
-      const images = ListOfImagesFromRequest(
-        Array.isArray(req.files) ? req.files : [],
-        req.body.fileUploadPath
-      );
+      const images = ListOfImagesFromRequest(Array.isArray(req.files) ? req.files : [], req.body.fileUploadPath);
       const productBody = await CreateProductSchema.validateAsync(req.body);
-      const {
-        title,
-        text,
-        short_text,
-        category,
-        tegs,
-        count,
-        price,
-        discount,
-        type,
-      } = productBody;
+      const { title, text, short_text, category, tegs, count, price, discount, type } = productBody;
       const supplier = req.user?._id;
       let feature = setFeatures(req.body);
       const product = await ProductModel.create({
@@ -76,26 +59,16 @@ class ProductController extends Controller {
       next(error);
     }
   }
-  async editProduct(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async editProduct(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       const product = await this.findProductById(id);
       const data = copyObject(req.body);
-      data.images = ListOfImagesFromRequest(
-        Array.isArray(req.files) ? req.files : [],
-        req.body.fileUploadPath
-      );
+      data.images = ListOfImagesFromRequest(Array.isArray(req.files) ? req.files : [], req.body.fileUploadPath);
       data.feature = setFeatures(req.body);
       let blackListFields = Object.values(ProductBlackList) as string[];
       deleteInvalidPropertyInObject(data, blackListFields);
-      const updateProductResult = await ProductModel.updateOne(
-        { _id: product._id },
-        { $set: data }
-      );
+      const updateProductResult = await ProductModel.updateOne({ _id: product._id }, { $set: data });
       if (updateProductResult.modifiedCount == 0)
         throw {
           status: createHttpError.InternalServerError,
@@ -109,19 +82,14 @@ class ProductController extends Controller {
       next(error);
     }
   }
-  async removeProduct(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async removeProduct(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       const product = await this.findProductById(id);
       const removeProductResult = await ProductModel.deleteOne({
         _id: product._id,
       });
-      if (removeProductResult.deletedCount == 0)
-        throw createHttpError.InternalServerError("");
+      if (removeProductResult.deletedCount == 0) throw createHttpError.InternalServerError("");
       res.status(StatusCodes.OK).json({
         statusCode: StatusCodes.OK,
         message: "حذف محصول با موفقیت انجام شد.",
@@ -130,11 +98,7 @@ class ProductController extends Controller {
       next(error);
     }
   }
-  async getAllProduct(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getAllProduct(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const search = (req.query.search as string) || "";
       const query = search ? { $text: { $search: search } } : {};
@@ -150,11 +114,7 @@ class ProductController extends Controller {
       next(error);
     }
   }
-  async getOneProduct(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getOneProduct(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       const product = await this.findProductById(id);
@@ -168,9 +128,7 @@ class ProductController extends Controller {
   }
   async findProductById(productID: string) {
     const { id } = await ObjectIdValidator.validateAsync({ id: productID });
-    const product = await ProductModel.findOne({ _id: id }).populate([
-      { path: "category", select: ["title"] },
-    ]);
+    const product = await ProductModel.findOne({ _id: id }).populate([{ path: "category", select: ["title"] }]);
     if (!product) throw createHttpError.NotFound("محصولی یافت نشد.");
     return product;
   }

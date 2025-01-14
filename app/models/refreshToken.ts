@@ -12,10 +12,7 @@ const RefreshTokenSchema = new MongooseSchema<IRefreshToken>({
   createdAt: { type: Date, default: Date.now, expires: "1y" },
 });
 
-const RefreshTokenModel = mongoose.model<IRefreshToken>(
-  "refreshToken",
-  RefreshTokenSchema
-);
+const RefreshTokenModel = mongoose.model<IRefreshToken>("refreshToken", RefreshTokenSchema);
 
 export type { IRefreshToken };
 export { RefreshTokenModel };
