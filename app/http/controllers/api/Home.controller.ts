@@ -3,11 +3,7 @@ import Controller from "../controller";
 import { StatusCodes } from "http-status-codes";
 
 class HomeController extends Controller {
-  async indexPage(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async indexPage(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       res.status(StatusCodes.OK).send("Index Page Store");
     } catch (error) {

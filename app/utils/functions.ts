@@ -25,15 +25,10 @@ const signAccessToken = (userId: string) => {
     const options = {
       expiresIn: "2h",
     };
-    JWT.sign(
-      payload,
-      secret,
-      options,
-      (error: Error | null, token: string | undefined) => {
-        if (error) reject(createError.InternalServerError("خطای سمت سرور"));
-        resolve(token);
-      }
-    );
+    JWT.sign(payload, secret, options, (error: Error | null, token: string | undefined) => {
+      if (error) reject(createError.InternalServerError("خطای سمت سرور"));
+      resolve(token);
+    });
   });
 };
 
@@ -60,26 +55,17 @@ const signRefreshToken = (userId: string) => {
 
 const verifyRefreshToken = (token: string) => {
   return new Promise((resolve, reject) => {
-    JWT.verify(
-      token,
-      REFRESH_TOKEN_SECRET_KEY,
-      async (error: Error | null, payload: any) => {
-        if (error)
-          return reject(createError.Unauthorized("وارد حساب کاربری خود شوید"));
-        const { mobile } = payload || {};
-        const user = await UserModel.findOne(
-          { mobile },
-          { password: 0, otp: 0 }
-        );
-        if (!user)
-          return reject(createError.Unauthorized("حساب کاربری یافت نشد."));
-        const refreshToken = await RefreshTokenModel.findOne({
-          userId: user?._id,
-        });
-        if (refreshToken?.token === token) return resolve(mobile);
-        reject(createError.Unauthorized("ورود مجدد به حساب کاربری انجام نشد."));
-      }
-    );
+    JWT.verify(token, REFRESH_TOKEN_SECRET_KEY, async (error: Error | null, payload: any) => {
+      if (error) return reject(createError.Unauthorized("وارد حساب کاربری خود شوید"));
+      const { mobile } = payload || {};
+      const user = await UserModel.findOne({ mobile }, { password: 0, otp: 0 });
+      if (!user) return reject(createError.Unauthorized("حساب کاربری یافت نشد."));
+      const refreshToken = await RefreshTokenModel.findOne({
+        userId: user?._id,
+      });
+      if (refreshToken?.token === token) return resolve(mobile);
+      reject(createError.Unauthorized("ورود مجدد به حساب کاربری انجام نشد."));
+    });
   });
 };
 
@@ -96,9 +82,7 @@ interface File {
 }
 const ListOfImagesFromRequest = (files: File[], fileUploadPath: string) => {
   if (files?.length > 0) {
-    return files
-      .map((file) => path.join(fileUploadPath, file.filename))
-      .map((item) => item.replace(/\\/g, "/"));
+    return files.map((file) => path.join(fileUploadPath, file.filename)).map((item) => item.replace(/\\/g, "/"));
   } else {
     return [];
   }
@@ -131,16 +115,12 @@ const setFeatures = (body: any) => {
   return feature;
 };
 
-const deleteInvalidPropertyInObject = (
-  data: any,
-  blackListFields: string[]
-) => {
+const deleteInvalidPropertyInObject = (data: any, blackListFields: string[]) => {
   let nullishData = ["", " ", "0", 0, null, undefined];
   Object.keys(data).forEach((key) => {
     if (blackListFields.includes(key)) delete data[key];
     if (typeof data[key] == "string") data[key] = data[key].trim();
-    if (Array.isArray(data[key]) && data[key].length > 0)
-      data[key] = data[key].map((item) => item.trim());
+    if (Array.isArray(data[key]) && data[key].length > 0) data[key] = data[key].map((item) => item.trim());
     if (Array.isArray(data[key]) && data[key].length == 0) delete data[key];
     if (nullishData.includes(data[key])) delete data[key];
   });

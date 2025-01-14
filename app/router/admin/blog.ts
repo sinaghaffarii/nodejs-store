@@ -96,12 +96,7 @@ router.get("/", AdminBlogController.getListOfBlogs);
  *                  description: Internal Server Error.
  */
 
-router.post(
-  "/add",
-  uploadFile.single("image"),
-  stringToArray("tags"),
-  AdminBlogController.createBlog
-);
+router.post("/add", uploadFile.single("image"), stringToArray("tags"), AdminBlogController.createBlog);
 
 /**
  * @swagger
@@ -132,12 +127,7 @@ router.post(
  *                  description: Internal Server Error.
  */
 
-router.patch(
-  "/update/:id",
-  uploadFile.single("image"),
-  stringToArray("tags"),
-  AdminBlogController.updateBlogById
-);
+router.patch("/update/:id", uploadFile.single("image"), stringToArray("tags"), AdminBlogController.updateBlogById);
 
 /**
  * @swagger

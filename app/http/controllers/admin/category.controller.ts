@@ -4,17 +4,10 @@ import createError from "http-errors";
 import mongoose from "mongoose";
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import {
-  AddCategorySchema,
-  UpdateCategorySchema,
-} from "@/http/validators/admin/category.schema";
+import { AddCategorySchema, UpdateCategorySchema } from "@/http/validators/admin/category.schema";
 
 class CategoryController extends Controller {
-  async addCategory(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async addCategory(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       await AddCategorySchema.validate(req.body);
       const { title, parent } = req.body;
@@ -30,11 +23,7 @@ class CategoryController extends Controller {
       next(error);
     }
   }
-  async remvoeCategory(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async remvoeCategory(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       const category = await this.checkExistCategory(id);
@@ -45,8 +34,7 @@ class CategoryController extends Controller {
       const deleteResult = await CategoryModel.deleteMany({
         $or: [{ _id: category._id }, { parent: category._id }],
       });
-      if (deleteResult.deletedCount == 0)
-        throw createError.InternalServerError("حذف دسته بندی انجام نشد.");
+      if (deleteResult.deletedCount == 0) throw createError.InternalServerError("حذف دسته بندی انجام نشد.");
       res.status(StatusCodes.OK).json({
         statusCode: StatusCodes.OK,
         message: "حذف دسته بندی با موفقیت انجام شد.",
@@ -55,22 +43,14 @@ class CategoryController extends Controller {
       next(error);
     }
   }
-  async editCategoryTitle(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async editCategoryTitle(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
       const { title } = req.body;
       const category = await this.checkExistCategory(id);
       await UpdateCategorySchema.validate(req.body);
-      const resultOfUpdate = await CategoryModel.updateOne(
-        { _id: id },
-        { $set: { title } }
-      );
-      if (resultOfUpdate.modifiedCount == 0)
-        throw createError.InternalServerError("بروز رسانی انجام نشد.");
+      const resultOfUpdate = await CategoryModel.updateOne({ _id: id }, { $set: { title } });
+      if (resultOfUpdate.modifiedCount == 0) throw createError.InternalServerError("بروز رسانی انجام نشد.");
       res.status(StatusCodes.OK).json({
         data: {
           statusCode: StatusCodes.OK,
@@ -81,11 +61,7 @@ class CategoryController extends Controller {
       next(error);
     }
   }
-  async getAllCategory(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getAllCategory(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       // const category = await CategoryModel.aggregate([
       //   {
@@ -135,10 +111,7 @@ class CategoryController extends Controller {
       //   },
       // ]);
 
-      const categories = await CategoryModel.find(
-        { parent: undefined },
-        { __v: 0 }
-      );
+      const categories = await CategoryModel.find({ parent: undefined }, { __v: 0 });
       res.status(StatusCodes.OK).json({
         data: {
           statusCode: StatusCodes.OK,
@@ -149,11 +122,7 @@ class CategoryController extends Controller {
       next(error);
     }
   }
-  async getCategoryById(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getCategoryById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id: _id } = req.params;
       const category = await CategoryModel.aggregate([
@@ -186,16 +155,9 @@ class CategoryController extends Controller {
       next(error);
     }
   }
-  async getAllParents(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getAllParents(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const parents = await CategoryModel.find(
-        { parent: undefined },
-        { __v: 0 }
-      );
+      const parents = await CategoryModel.find({ parent: undefined }, { __v: 0 });
       res.status(StatusCodes.OK).json({
         data: {
           statusCode: StatusCodes.OK,
@@ -206,17 +168,10 @@ class CategoryController extends Controller {
       next(error);
     }
   }
-  async getChildOfParents(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getChildOfParents(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { parent } = req.params;
-      const children = await CategoryModel.find(
-        { parent },
-        { __v: 0, parent: 0 }
-      );
+      const children = await CategoryModel.find({ parent }, { __v: 0, parent: 0 });
       res.status(StatusCodes.OK).json({
         data: {
           statusCode: StatusCodes.OK,
@@ -227,11 +182,7 @@ class CategoryController extends Controller {
       next(error);
     }
   }
-  async getAllCategoryWithoutPopulate(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  async getAllCategoryWithoutPopulate(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const categories = await CategoryModel.aggregate([
         {

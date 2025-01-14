@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema as MongooseSchema } from "mongoose";
-import { CommentModel } from "./public.schema";
+import { CommentSchema } from "./public.schema";
 
 interface IEpisode extends Document {
   title: string;
@@ -21,7 +21,7 @@ interface ICourse extends Document {
   image: string;
   tags: string[];
   category: mongoose.Types.ObjectId;
-  comments: (typeof CommentModel)[];
+  comments: (typeof CommentSchema)[];
   likes: mongoose.Types.ObjectId[];
   dislikes: mongoose.Types.ObjectId[];
   bookmarks: mongoose.Types.ObjectId[];
@@ -30,7 +30,7 @@ interface ICourse extends Document {
   type: string;
   time: string;
   teacher: mongoose.Types.ObjectId;
-  chapter: IChapter[];
+  chapters: IChapter[];
   students: mongoose.Types.ObjectId[];
 }
 
@@ -54,7 +54,7 @@ const CourseSchema = new MongooseSchema<ICourse>({
   image: { type: String, require: true },
   tags: { type: [String], default: [] },
   category: { type: mongoose.Schema.Types.ObjectId, require: true },
-  comments: { type: [CommentModel], default: [] },
+  comments: { type: [CommentSchema], default: [] },
   likes: { type: [mongoose.Schema.Types.ObjectId], default: [] },
   dislikes: { type: [mongoose.Schema.Types.ObjectId], default: [] },
   bookmarks: { type: [mongoose.Schema.Types.ObjectId], default: [] },
@@ -67,7 +67,7 @@ const CourseSchema = new MongooseSchema<ICourse>({
   },
   time: { type: String, default: "00:00:00" },
   teacher: { type: mongoose.Schema.Types.ObjectId, ref: "user", require: true }, // تامین کننده
-  chapter: { type: [ChapterSchema], default: [] },
+  chapters: { type: [ChapterSchema], default: [] },
   students: {
     type: [mongoose.Schema.Types.ObjectId],
     default: [],
@@ -75,7 +75,9 @@ const CourseSchema = new MongooseSchema<ICourse>({
   },
 });
 
-const CategoryModel = mongoose.model<ICourse>("category", CourseSchema);
+CourseSchema.index({ title: "text", short_text: "text", text: "text" });
+
+const CourseModel = mongoose.model<ICourse>("course", CourseSchema);
 
 export type { ICourse };
-export { CategoryModel };
+export { CourseModel };
