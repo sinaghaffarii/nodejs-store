@@ -33,6 +33,7 @@ const router = Router();
  *            - discount
  *            - image
  *            - type
+ *            - teacher
  *          properties:
  *            title:
  *              type: string
@@ -59,6 +60,9 @@ const router = Router();
  *            image:
  *              type: file
  *              description: The image to upload
+ *           teacher:
+ *              type: string
+ *              description: the Teacher of Course
  *            type:
  *              $ref: '#/components/schemas/Types'
  */
