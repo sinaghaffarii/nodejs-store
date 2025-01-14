@@ -58,6 +58,19 @@ class CourseController extends Controller {
       next(error);
     }
   }
+  async getCourseById(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const course = await CourseModel.find({ _id: id });
+      if (!course) throw createHttpError.NotFound("دوره ای یافت نشد.");
+      res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
+        data: course,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const AdminCourseController = new CourseController();

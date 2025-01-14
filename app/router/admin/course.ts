@@ -87,6 +87,23 @@ router.get("/list", AdminCourseController.getListOfCourses); // get all course
 
 /**
  * @swagger
+ *  /admin/courses/{id}:
+ *      get:
+ *          tags: [Course(AdminPanel)]
+ *          summary: get one of course by id
+ *          parameters:
+ *              -   in: path
+ *                  name: id
+ *                  type: string
+ *          responses:
+ *              200:
+ *                  description: success
+ */
+
+router.get("/:id", AdminCourseController.getCourseById); // get one course by id
+
+/**
+ * @swagger
  *   /admin/courses/add:
  *     post:
  *       tags:
