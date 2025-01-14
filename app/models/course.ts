@@ -28,6 +28,7 @@ interface ICourse extends Document {
   price: number;
   discount: number;
   type: string;
+  status: string;
   time: string;
   teacher: mongoose.Types.ObjectId;
   chapters: IChapter[];
@@ -65,6 +66,7 @@ const CourseSchema = new MongooseSchema<ICourse>({
     default: "free",
     /* free - cash - special */ require: true,
   },
+  status: { type: String, default: "notStarted" /*notStarted, completed, holding*/ },
   time: { type: String, default: "00:00:00" },
   teacher: { type: mongoose.Schema.Types.ObjectId, ref: "user", require: true }, // تامین کننده
   chapters: { type: [ChapterSchema], default: [] },
