@@ -5,6 +5,7 @@ import { StatusCodes } from "http-status-codes";
 import path from "path";
 import { CreateCourseSchema } from "@/http/validators/admin/course.schema";
 import createHttpError from "http-errors";
+import mongoose from "mongoose";
 
 class CourseController extends Controller {
   async getListOfCourses(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -13,9 +14,9 @@ class CourseController extends Controller {
       const query = search ? { $text: { $search: search } } : {};
       const courses = await CourseModel.find(query).sort({ _id: -1 });
       res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
+        totalCount: courses.length,
         data: {
-          statusCode: StatusCodes.OK,
-          totalCount: courses.length,
           courses,
         },
       });
@@ -51,7 +52,9 @@ class CourseController extends Controller {
       if (!course?._id) throw createHttpError.InternalServerError("دوره ثبت نگردید.");
       res.status(StatusCodes.CREATED).json({
         statusCode: StatusCodes.CREATED,
-        message: "دوره با موفقیت ایجاد شد.",
+        data: {
+          message: "دوره با موفقیت ایجاد شد.",
+        },
       });
     } catch (error) {
       console.error("Error in addCourse:", error);
@@ -65,11 +68,40 @@ class CourseController extends Controller {
       if (!course) throw createHttpError.NotFound("دوره ای یافت نشد.");
       res.status(StatusCodes.OK).json({
         statusCode: StatusCodes.OK,
-        data: course,
+        data: { course },
       });
     } catch (error) {
       next(error);
     }
+  }
+  async addChapter(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id, title, text } = req.body;
+      await this.findCourseById(id);
+      const saveChapterResult = await CourseModel.updateOne(
+        { _id: id },
+        {
+          $push: {
+            chapters: { title, text, episodes: [] },
+          },
+        }
+      );
+      if (saveChapterResult.modifiedCount == 0) throw createHttpError.InternalServerError("فصل افزوده نشد.");
+      res.status(StatusCodes.CREATED).json({
+        statusCode: StatusCodes.CREATED,
+        data: {
+          message: "فصل با موفقیت ایجاد شد.",
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async findCourseById(id: string): Promise<ICourse> {
+    if (!mongoose.isValidObjectId(id)) throw createHttpError.BadRequest("شناسه مورد نظر صحیح نمیباشد.");
+    const course = await CourseModel.findById({ _id: id });
+    if (!course) throw createHttpError.NotFound("دوره ای یافت نشد.");
+    return course;
   }
 }
 

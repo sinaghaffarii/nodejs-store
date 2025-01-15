@@ -46,9 +46,9 @@ class ProductController extends Controller {
         type,
       });
       res.status(StatusCodes.CREATED).json({
+        statusCode: StatusCodes.CREATED,
+        message: "ثبت محصول با موفقیت افزوده شد.",
         data: {
-          statusCode: StatusCodes.CREATED,
-          message: "ثبت محصول با موفقیت افزوده شد.",
           product,
         },
       });
@@ -76,7 +76,7 @@ class ProductController extends Controller {
         };
       res.status(StatusCodes.OK).json({
         statusCode: StatusCodes.OK,
-        message: "به روز رسانی با موفقیت انجام شد.",
+        data: { message: "به روز رسانی با موفقیت انجام شد." },
       });
     } catch (error) {
       next(error);
@@ -92,7 +92,9 @@ class ProductController extends Controller {
       if (removeProductResult.deletedCount == 0) throw createHttpError.InternalServerError("");
       res.status(StatusCodes.OK).json({
         statusCode: StatusCodes.OK,
-        message: "حذف محصول با موفقیت انجام شد.",
+        data: {
+          message: "حذف محصول با موفقیت انجام شد.",
+        },
       });
     } catch (error) {
       next(error);
@@ -104,9 +106,9 @@ class ProductController extends Controller {
       const query = search ? { $text: { $search: search } } : {};
       const products = await ProductModel.find(query);
       res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
+        totalCount: products.length,
         data: {
-          statusCode: StatusCodes.OK,
-          totalCount: products.length,
           products,
         },
       });
@@ -120,7 +122,7 @@ class ProductController extends Controller {
       const product = await this.findProductById(id);
       res.status(StatusCodes.OK).json({
         statusCode: StatusCodes.OK,
-        product,
+        data: { product },
       });
     } catch (error) {
       next(error);

@@ -30,8 +30,8 @@ class BlogController extends Controller {
         author,
       });
       res.status(StatusCodes.CREATED).json({
+        statusCode: StatusCodes.CREATED,
         data: {
-          statusCode: StatusCodes.CREATED,
           message: "ایجاد بلاگ با موفقیت انجام شد.",
           blog,
         },
@@ -46,8 +46,8 @@ class BlogController extends Controller {
       const { id } = req.params;
       const blog = await this.findBlog({ _id: id });
       res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
         data: {
-          statusCode: StatusCodes.OK,
           blog,
         },
       });
@@ -97,9 +97,9 @@ class BlogController extends Controller {
       ]);
       res.status(StatusCodes.OK).json({
         statusCode: StatusCodes.OK,
+        totalCount: blogs.length,
         data: {
           blogs,
-          totalCount: blogs.length,
         },
       });
     } catch (error) {
@@ -120,8 +120,8 @@ class BlogController extends Controller {
       const result = await BlogModel.deleteOne({ _id: id });
       if (result.deletedCount == 0) throw createHttpError.InternalServerError("حذف انجام نشد.");
       res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
         data: {
-          statusCode: StatusCodes.OK,
           message: "حذف با موفقیت انجام شد.",
         },
       });
@@ -158,8 +158,8 @@ class BlogController extends Controller {
 
       if (updateResult.modifiedCount == 0) throw createHttpError.InternalServerError("بروز رسانی انجام نشد.");
       res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
         data: {
-          statusCode: StatusCodes.OK,
           message: "بروز رسانی بلاگ با موفقیت انجام شد.",
         },
       });
