@@ -1,18 +1,18 @@
 import createHttpError from "http-errors";
-import { ProductModel } from "../../../models/product";
+import { ProductModel } from "../../../../models/product";
 import {
   copyObject,
   deleteFileInPublic,
   deleteInvalidPropertyInObject,
   ListOfImagesFromRequest,
   setFeatures,
-} from "../../../utils/functions";
+} from "../../../../utils/functions";
 import { CreateProductSchema } from "@/http/validators/admin/product.schema";
 import { ObjectIdValidator } from "@/http/validators/public.validator";
-import Controller from "../controller";
+import Controller from "../../controller";
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { IProduct } from "../../../models/product";
+import { IProduct } from "../../../../models/product";
 import { ProductBlackList } from "@/utils/enums";
 
 class ProductController extends Controller {

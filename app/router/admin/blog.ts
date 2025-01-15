@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { uploadFile } from "@/utils/multer";
 import { stringToArray } from "@/http/middlewares/stringToArray";
-import AdminBlogController from "@/http/controllers/admin/blog.controller";
+import AdminBlogController from "@/http/controllers/admin/blog/blog.controller";
 
 const router = Router();
 

@@ -1,5 +1,5 @@
-import { CategoryModel } from "../../../models/category";
-import Controller from "../controller";
+import { CategoryModel } from "../../../../models/category";
+import Controller from "../../controller";
 import createError from "http-errors";
 import mongoose from "mongoose";
 import { NextFunction, Request, Response } from "express";

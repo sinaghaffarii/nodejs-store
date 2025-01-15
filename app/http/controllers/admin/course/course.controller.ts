@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import Controller from "../controller";
+import Controller from "../../controller";
 import { CourseModel, ICourse } from "@/models/course";
 import { StatusCodes } from "http-status-codes";
 import path from "path";
@@ -74,29 +74,6 @@ class CourseController extends Controller {
       next(error);
     }
   }
-  async addChapter(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const { id, title, text } = req.body;
-      await this.findCourseById(id);
-      const saveChapterResult = await CourseModel.updateOne(
-        { _id: id },
-        {
-          $push: {
-            chapters: { title, text, episodes: [] },
-          },
-        }
-      );
-      if (saveChapterResult.modifiedCount == 0) throw createHttpError.InternalServerError("فصل افزوده نشد.");
-      res.status(StatusCodes.CREATED).json({
-        statusCode: StatusCodes.CREATED,
-        data: {
-          message: "فصل با موفقیت ایجاد شد.",
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
   async findCourseById(id: string): Promise<ICourse> {
     if (!mongoose.isValidObjectId(id)) throw createHttpError.BadRequest("شناسه مورد نظر صحیح نمیباشد.");
     const course = await CourseModel.findById({ _id: id });
@@ -106,5 +83,4 @@ class CourseController extends Controller {
 }
 
 export const AdminCourseController = new CourseController();
-
 export default AdminCourseController;

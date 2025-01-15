@@ -1,4 +1,4 @@
-import AdminCourseController from "@/http/controllers/admin/course.controller";
+import AdminCourseController from "@/http/controllers/admin/course/course.controller";
 import { stringToArray } from "@/http/middlewares/stringToArray";
 import { uploadFile } from "@/utils/multer";
 import { Router } from "express";
@@ -11,7 +11,6 @@ router.get("/:id", AdminCourseController.getCourseById); // get one course by id
 
 router.post("/add", uploadFile.single("image"), stringToArray("tags"), AdminCourseController.addCourse);
 
-router.put("/add-chapter", AdminCourseController.addChapter);
 // router.put() // create new episode
 // router.delete() // remove a course
 // router.patch() // edit a course
