@@ -1,4 +1,4 @@
-import AdminCategoryController from "@/http/controllers/admin/category.controller";
+import AdminCategoryController from "@/http/controllers/admin/category/category.controller";
 import { Router } from "express";
 
 const router = Router();

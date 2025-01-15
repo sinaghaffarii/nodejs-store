@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 import { NextFunction, Request, Response } from "express";
 import createHttpError from "http-errors";
-import { BlogModel } from "../../../models/blog";
-import { deleteFileInPublic } from "../../../utils/functions";
+import { BlogModel } from "../../../../models/blog";
+import { deleteFileInPublic } from "../../../../utils/functions";
 import CreateBlogSchema from "@/http/validators/admin/blog.schema";
-import Controller from "./../controller";
+import Controller from "./../../controller";
 import path from "path";
 import { StatusCodes } from "http-status-codes";
 

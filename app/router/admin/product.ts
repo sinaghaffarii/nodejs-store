@@ -1,4 +1,4 @@
-import AdminProductController from "@/http/controllers/admin/product.controller";
+import AdminProductController from "@/http/controllers/admin/product/product.controller";
 import { stringToArray } from "../../http/middlewares/stringToArray";
 import { uploadFile } from "../../utils/multer";
 import { Router } from "express";
