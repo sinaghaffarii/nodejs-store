@@ -1,7 +1,7 @@
 /**
  * @swagger
  *  definitions:
- *      publidDefinition:
+ *      publicDefinition:
  *          type: object
  *          properties:
  *              statusCode:

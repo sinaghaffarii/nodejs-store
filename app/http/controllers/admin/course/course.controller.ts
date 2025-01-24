@@ -12,7 +12,12 @@ class CourseController extends Controller {
     try {
       const search = (req.query.search as string) || "";
       const query = search ? { $text: { $search: search } } : {};
-      const courses = await CourseModel.find(query).sort({ _id: -1 });
+      const courses = await CourseModel.find(query)
+        .populate([
+          { path: "category", select: { children: 0, parent: 0 } },
+          { path: "teacher", select: { first_name: 1, last_name: 1, mobile: 1, email: 1 } },
+        ])
+        .sort({ _id: -1 });
       res.status(StatusCodes.OK).json({
         statusCode: StatusCodes.OK,
         totalCount: courses.length,

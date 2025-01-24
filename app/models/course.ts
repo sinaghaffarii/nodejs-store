@@ -6,6 +6,7 @@ interface IEpisode extends Document {
   text: string;
   type: string;
   time: string;
+  videoAddress: string;
 }
 
 interface IChapter extends Document {
@@ -38,8 +39,9 @@ interface ICourse extends Document {
 const EpisodeSchema = new MongooseSchema<IEpisode>({
   title: { type: String, required: true },
   text: { type: String, required: true },
-  type: { type: String, default: "free" },
+  type: { type: String, default: "unlock" },
   time: { type: String, required: true },
+  videoAddress: { type: String, required: true },
 });
 
 const ChapterSchema = new MongooseSchema<IChapter>({
@@ -48,33 +50,46 @@ const ChapterSchema = new MongooseSchema<IChapter>({
   episodes: { type: [EpisodeSchema], default: [] },
 });
 
-const CourseSchema = new MongooseSchema<ICourse>({
-  title: { type: String, require: true },
-  short_text: { type: String, require: true },
-  text: { type: String, require: true },
-  image: { type: String, require: true },
-  tags: { type: [String], default: [] },
-  category: { type: mongoose.Schema.Types.ObjectId, require: true },
-  comments: { type: [CommentSchema], default: [] },
-  likes: { type: [mongoose.Schema.Types.ObjectId], default: [] },
-  dislikes: { type: [mongoose.Schema.Types.ObjectId], default: [] },
-  bookmarks: { type: [mongoose.Schema.Types.ObjectId], default: [] },
-  price: { type: Number, default: 0 },
-  discount: { type: Number, default: 0 },
-  type: {
-    type: String,
-    default: "free",
-    /* free - cash - special */ require: true,
+const CourseSchema = new MongooseSchema<ICourse>(
+  {
+    title: { type: String, require: true },
+    short_text: { type: String, require: true },
+    text: { type: String, require: true },
+    image: { type: String, require: true },
+    tags: { type: [String], default: [] },
+    category: { type: mongoose.Schema.Types.ObjectId, require: true, ref: "category" },
+    comments: { type: [CommentSchema], default: [] },
+    likes: { type: [mongoose.Schema.Types.ObjectId], default: [] },
+    dislikes: { type: [mongoose.Schema.Types.ObjectId], default: [] },
+    bookmarks: { type: [mongoose.Schema.Types.ObjectId], default: [] },
+    price: { type: Number, default: 0 },
+    discount: { type: Number, default: 0 },
+    type: {
+      type: String,
+      default: "free",
+      /* free - cash - special */ require: true,
+    },
+    status: { type: String, default: "notStarted" /*notStarted, completed, holding*/ },
+    time: { type: String, default: "00:00:00" },
+    teacher: { type: mongoose.Schema.Types.ObjectId, ref: "user", require: true }, // تامین کننده
+    chapters: { type: [ChapterSchema], default: [] },
+    students: {
+      type: [mongoose.Schema.Types.ObjectId],
+      default: [],
+      ref: "user",
+    },
   },
-  status: { type: String, default: "notStarted" /*notStarted, completed, holding*/ },
-  time: { type: String, default: "00:00:00" },
-  teacher: { type: mongoose.Schema.Types.ObjectId, ref: "user", require: true }, // تامین کننده
-  chapters: { type: [ChapterSchema], default: [] },
-  students: {
-    type: [mongoose.Schema.Types.ObjectId],
-    default: [],
-    ref: "user",
-  },
+  {
+    toJSON: {
+      virtuals: true,
+    },
+  }
+);
+
+CourseSchema.virtual("Category_Virtual", {
+  ref: "category",
+  localField: "_id",
+  foreignField: "category",
 });
 
 CourseSchema.index({ title: "text", short_text: "text", text: "text" });

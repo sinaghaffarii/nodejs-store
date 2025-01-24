@@ -16,3 +16,14 @@ export const CreateCourseSchema = Joi.object({
     .error(createHttpError.BadRequest("تصویر ارسال شده صحیح نمیباشد")),
   fileUploadPath: Joi.allow(),
 });
+export const CreateEpisodeSchema = Joi.object({
+  title: Joi.string().min(3).max(30).error(createHttpError.BadRequest("عنوان دوره صحیح نمیباشد.")),
+  text: Joi.string().error(createHttpError.BadRequest("متن ارسال شده صحیح نمیباشد")),
+  type: Joi.string().pattern(/(lock|unlock)/i) /* lock - unlock */,
+  chapterID: Joi.string().pattern(ConstantConfig.MongoIDPattern).error(createHttpError.BadRequest("شناسه فصل صحیح نمیباشد")),
+  courseID: Joi.string().pattern(ConstantConfig.MongoIDPattern).error(createHttpError.BadRequest("شناسه دوره صحیح نمیباشد")),
+  filename: Joi.string()
+    .pattern(/(\.mp4|\.mpg|\.mov|\.avi|\.mkv)$/)
+    .error(createHttpError.BadRequest("ویدیو بارگذاری شده صحیح نمیباشد.")),
+  fileUploadPath: Joi.allow(),
+});

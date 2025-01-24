@@ -126,6 +126,24 @@ const deleteInvalidPropertyInObject = (data: any, blackListFields: string[]) => 
   });
 };
 
+function getTime(time: number): string {
+  let total = Math.round(time) / 60;
+  let [min, percentage] = String(total).split(".");
+  if (percentage === undefined) percentage = "0";
+  let sec = Math.round((parseInt(percentage.substring(0, 2)) * 60) / 100);
+  let hour: number | string = 0;
+  if (parseInt(min) > 59) {
+    total = parseInt(min) / 60;
+    [hour, percentage] = String(total).split(".");
+    if (percentage === undefined) percentage = "0";
+    min = String(Math.round((parseInt(percentage.substring(0, 2)) * 60) / 100));
+  }
+  if (parseInt(hour as string) < 10) hour = `0${hour}`;
+  if (parseInt(min) < 10) min = `0${min}`;
+  if (sec < 10) sec = Number(`0${sec}`);
+  return `${hour}:${min}:${sec}`;
+}
+
 export {
   RandomNumberGenerator,
   signAccessToken,
@@ -136,4 +154,5 @@ export {
   copyObject,
   setFeatures,
   deleteInvalidPropertyInObject,
+  getTime,
 };
