@@ -1,4 +1,3 @@
-
 /**
  * @swagger
  *  components:
@@ -11,6 +10,7 @@
  *                  mobile:
  *                    type: string
  *                    description: the user mobile for signup/signin
+ *                    example: "09912508255"
  *          CheckOTP:
  *              type: object
  *              required:
@@ -20,6 +20,7 @@
  *                  mobile:
  *                     type: string
  *                     description: the user mobile for signup/signin
+ *                     example: "09912508255"
  *                  code:
  *                     type: integer
  *                     description: recived code from GetOTP
@@ -67,7 +68,6 @@
  *                  description: Internal Server Error
  */
 
-
 /**
  * @swagger
  *  /user/check-otp:
@@ -95,7 +95,6 @@
  *                  description: Internal Server Error
  *
  */
-
 
 /**
  * @swagger

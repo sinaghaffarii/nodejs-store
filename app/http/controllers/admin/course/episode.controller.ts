@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import Controller from "../../controller";
 import { CreateEpisodeSchema } from "@/http/validators/admin/course.schema";
 import path from "path";
-import { deleteInvalidPropertyInObject, getTime } from "@/utils/functions";
+import { copyObject, deleteFileInPublic, deleteInvalidPropertyInObject, getTime } from "@/utils/functions";
 import { getVideoDurationInSeconds } from "get-video-duration";
 import { CourseModel } from "@/models/course";
 import createHttpError from "http-errors";
@@ -52,7 +52,9 @@ class EpisodeController extends Controller {
   }
   async updateEpisode(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { id: episodeID } = await ObjectIdValidator.validateAsync({ id: req.params.episodeID });
+      const { episodeID } = req.params;
+      const episode = await this.getOneEpisode(episodeID);
+      console.log("episode::::::", episode);
       const { filename, fileUploadPath } = req.body;
       let blackListFields = ["_id"];
       if (filename && fileUploadPath) {
@@ -66,6 +68,8 @@ class EpisodeController extends Controller {
         const videoURL = new URL(req.body.videoAddress, baseURL).toString();
         const seconds = await getVideoDurationInSeconds(videoURL);
         req.body.time = getTime(seconds);
+        blackListFields.push("filename");
+        blackListFields.push("fileUploadPath");
       } else {
         blackListFields.push("time");
         blackListFields.push("videoAddress");
@@ -76,10 +80,14 @@ class EpisodeController extends Controller {
         { "chapters.episodes._id": episodeID },
         {
           $set: {
-            "chapters.$.episodes": data,
+            "chapters.$[chapter].episodes.$[episode]": { ...episode, ...data },
           },
+        },
+        {
+          arrayFilters: [{ "chapter.episodes._id": episodeID }, { "episode._id": episodeID }],
         }
       );
+
       if (editEpisodeResult.modifiedCount == 0) throw new createHttpError.InternalServerError("ویرایش اپیزود با خطا مواجه شد.");
       res.status(StatusCodes.CREATED).json({
         statusCode: StatusCodes.CREATED,
@@ -94,6 +102,7 @@ class EpisodeController extends Controller {
   async removeEpisode(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id: episodeID } = await ObjectIdValidator.validateAsync({ id: req.params.episodeID });
+      await this.getOneEpisode(episodeID);
       const removeEpisodeResult = await CourseModel.updateOne(
         { "chapters.episodes._id": episodeID },
         {
@@ -114,6 +123,22 @@ class EpisodeController extends Controller {
     } catch (error) {
       next(error);
     }
+  }
+  async getOneEpisode(episodeID: string) {
+    const course = await CourseModel.findOne(
+      { "chapters.episodes._id": episodeID },
+      {
+        "chapters.$": 1,
+      }
+    );
+    if (!course) throw new createHttpError.NotFound("دوره ای یافت نشد.");
+    let episode;
+    for (const chapter of course.chapters) {
+      episode = chapter.episodes.find((ep: any) => ep._id.toString() === episodeID);
+      if (episode) break;
+    }
+    if (!episode) throw new createHttpError.NotFound("اپیزودی یافت نشد.");
+    return copyObject(episode);
   }
 }
 

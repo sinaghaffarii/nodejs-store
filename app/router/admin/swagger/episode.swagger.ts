@@ -14,7 +14,7 @@
  *          properties:
  *              courseID:
  *                type: string
- *                example: "6786885c230fbd2d0d1be9a1"
+ *                example: "678693737b24957d478ddf5a"
  *              chapterID:
  *                type: string
  *                example: "679157a76099eccea2e2f21e"
