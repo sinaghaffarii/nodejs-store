@@ -3,6 +3,8 @@
  *  tags:
  *     -  name: Admin-Panel
  *        description: action of admin (add, remove, edit and any do)
+ *     -  name: User(AdminPanel)
+ *        description: Management User of websites
  *     -  name: Chapter(AdminPanel)
  *        description: Management Chapter Section
  *     -  name: Episode(AdminPanel)
