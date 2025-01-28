@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema as MongooseSchema } from "mongoose";
 import { CommentSchema } from "./public.schema";
+import { getTimeOfCourse } from "@/utils/functions";
 
 interface IEpisode extends Document {
   title: string;
@@ -44,6 +45,10 @@ const EpisodeSchema = new MongooseSchema<IEpisode>({
   videoAddress: { type: String, required: true },
 });
 
+EpisodeSchema.virtual("imageURL").get(function () {
+  return `${process.env.BASE_URL}:${process.env.APPLICATION_PORT}/${this.videoAddress}`;
+});
+
 const ChapterSchema = new MongooseSchema<IChapter>({
   title: { type: String, required: true },
   text: { type: String, default: "" },
@@ -70,7 +75,6 @@ const CourseSchema = new MongooseSchema<ICourse>(
       /* free - cash - special */ require: true,
     },
     status: { type: String, default: "notStarted" /*notStarted, completed, holding*/ },
-    time: { type: String, default: "00:00:00" },
     teacher: { type: mongoose.Schema.Types.ObjectId, ref: "user", require: true }, // تامین کننده
     chapters: { type: [ChapterSchema], default: [] },
     students: {
@@ -94,7 +98,15 @@ CourseSchema.virtual("Category_Virtual", {
 
 CourseSchema.index({ title: "text", short_text: "text", text: "text" });
 
+CourseSchema.virtual("imageURL").get(function () {
+  return `${process.env.BASE_URL}:${process.env.APPLICATION_PORT}/${this.image}`;
+});
+
+CourseSchema.virtual("totalTime").get(function () {
+  return getTimeOfCourse(this.chapters || []);
+});
+
 const CourseModel = mongoose.model<ICourse>("course", CourseSchema);
 
-export type { ICourse };
+export type { ICourse, IChapter, IEpisode };
 export { CourseModel };

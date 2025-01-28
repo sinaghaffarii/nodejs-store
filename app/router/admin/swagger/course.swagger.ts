@@ -129,6 +129,41 @@
  *              example: "Sina Ghaffari"
  *            type:
  *              $ref: '#/components/schemas/Types'
+ *        Edit-Course:
+ *          type: object
+ *          properties:
+ *            title:
+ *              type: string
+ *              description: The title of the course
+ *            short_text:
+ *              type: string
+ *              description: A short summary of the course
+ *            text:
+ *              type: string
+ *              description: Detailed description of the course
+ *            tags:
+ *              type: array
+ *              description: Tags associated with the course
+ *              items:
+ *                type: string
+ *            category:
+ *              type: string
+ *              description: The category of the course
+ *            price:
+ *              type: integer
+ *              description: The price of the course
+ *            discount:
+ *              type: integer
+ *              description: The discount on the course price
+ *            image:
+ *              type: string
+ *              format: binary
+ *              description: The image to upload
+ *            teacher:
+ *              type: string
+ *              description: The teacher of the course
+ *            type:
+ *              $ref: '#/components/schemas/Types'
  */
 
 /**
@@ -166,8 +201,6 @@
  *                  description: success
  */
 
-
-
 /**
  * @swagger
  *   /admin/courses/add:
@@ -181,6 +214,33 @@
  *           multipart/form-data:
  *             schema:
  *                $ref: '#/components/schemas/Insert-Course'
+ *       responses:
+ *         201:
+ *           description: Created successfully!
+ *         400:
+ *           description: Bad Request - Invalid input.
+ *         500:
+ *           description: Internal Server Error.
+ */
+
+/**
+ * @swagger
+ *   /admin/courses/update/{id}:
+ *     patch:
+ *       tags:
+ *         - Course(AdminPanel)
+ *       summary: Edit and save Course
+ *       parameters:
+ *          -   in: path
+ *              name: id
+ *              type: string
+ *              required: true
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           multipart/form-data:
+ *             schema:
+ *                $ref: '#/components/schemas/Edit-Course'
  *       responses:
  *         201:
  *           description: Created successfully!

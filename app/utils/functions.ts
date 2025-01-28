@@ -3,10 +3,15 @@ import createError from "http-errors";
 import { UserModel } from "../models/user";
 // import { ACCESS_TOKEN_SECRET_KEY, REFRESH_TOKEN_SECRET_KEY } from "./constants";
 import { ConstantConfig } from "./constants";
+import { fileURLToPath } from "url";
 
 import { RefreshTokenModel } from "../models/refreshToken";
 import path from "path";
 import fs from "fs";
+import { IChapter, IEpisode } from "@/models/course";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const RandomNumberGenerator = (): number => {
   return Math.floor(10000 + Math.random() * 90000);
@@ -144,6 +149,35 @@ function getTime(time: number): string {
   return `${hour}:${min}:${sec}`;
 }
 
+function getTimeOfCourse(chapters: IChapter[]): string {
+  let totalSeconds = 0;
+
+  for (const chapter of chapters) {
+      for (const episode of chapter.episodes) {
+      const ep = episode as unknown as IEpisode;
+      let timeParts = ep?.time ? ep.time.split(":") : ["00", "00", "00"];
+      if (timeParts.length === 3) {
+        totalSeconds += Number(timeParts[0]) * 3600; // convert hour to seconds
+        totalSeconds += Number(timeParts[1]) * 60; // convert minutes to seconds
+        totalSeconds += Number(timeParts[2]); // add seconds
+      } else if (timeParts.length === 2) {
+        totalSeconds += Number(timeParts[0]) * 60; // convert minutes to seconds
+        totalSeconds += Number(timeParts[1]); // add seconds
+      }
+    }
+  }
+
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const formattedHours = String(hours).padStart(2, "0");
+  const formattedMinutes = String(minutes).padStart(2, "0");
+  const formattedSeconds = String(seconds).padStart(2, "0");
+
+  return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+}
+
 export {
   RandomNumberGenerator,
   signAccessToken,
@@ -155,4 +189,5 @@ export {
   setFeatures,
   deleteInvalidPropertyInObject,
   getTime,
+  getTimeOfCourse,
 };

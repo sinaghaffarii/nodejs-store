@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import Controller from "../../controller";
-import { CourseModel, ICourse } from "@/models/course";
+import { CourseModel, IChapter, ICourse } from "@/models/course";
 import { StatusCodes } from "http-status-codes";
 import path from "path";
 import { CreateCourseSchema } from "@/http/validators/admin/course.schema";
 import createHttpError from "http-errors";
 import mongoose from "mongoose";
+import { copyObject, deleteFileInPublic, deleteInvalidPropertyInObject, getTimeOfCourse } from "@/utils/functions";
 
 class CourseController extends Controller {
   async getListOfCourses(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -49,7 +50,6 @@ class CourseController extends Controller {
         price,
         discount,
         image,
-        time: "00:00:00",
         status: "notStarted",
         teacher,
         type,
@@ -66,14 +66,55 @@ class CourseController extends Controller {
       next(error);
     }
   }
+
   async getCourseById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
-      const course = await CourseModel.find({ _id: id });
+      const course = await CourseModel.findById(id);
       if (!course) throw createHttpError.NotFound("دوره ای یافت نشد.");
       res.status(StatusCodes.OK).json({
         statusCode: StatusCodes.OK,
         data: { course },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async updateCourseById(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const course = await this.findCourseById(id);
+      const data = copyObject(req.body);
+      const { filename, fileUploadPath } = req.body;
+      let blackListFields = [
+        "time",
+        "chapters",
+        "episodes",
+        "students",
+        "bookmarks",
+        "likes",
+        "dislikes",
+        "comments",
+        "fileUploadPath",
+        "filename",
+      ];
+      deleteInvalidPropertyInObject(data, blackListFields);
+      if (req.file) {
+        data.image = path.join(fileUploadPath, filename).replace(/\\/g, "/");
+        deleteFileInPublic(course.image);
+      }
+      const updateCourseResult = await CourseModel.updateOne(
+        { _id: id },
+        {
+          $set: data,
+        }
+      );
+      if (!updateCourseResult.modifiedCount) throw new createHttpError.InternalServerError("بروز رسانی دوره انجام نشد.");
+      res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
+        data: {
+          message: "بروز رسانی دوره با موفقیت انجام شد.",
+        },
       });
     } catch (error) {
       next(error);

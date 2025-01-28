@@ -68,6 +68,10 @@ const ProductSchema = new MongooseSchema<IProduct>({
 
 ProductSchema.index({ title: "text", short_text: "text", text: "text" });
 
+ProductSchema.virtual("imagesURL").get(function (this: IProduct) {
+  return this.images.map((image) => `${process.env.BASE_URL}:${process.env.APPLICATION_PORT}/${image}`);
+});
+
 const ProductModel = mongoose.model<IProduct>("product", ProductSchema);
 
 export type { IProduct };

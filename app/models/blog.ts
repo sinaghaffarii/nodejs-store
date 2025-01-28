@@ -68,6 +68,10 @@ BlogSchema.virtual("category_detail", {
   foreignField: "category",
 });
 
+BlogSchema.virtual("imageURL").get(function () {
+  return `${process.env.BASE_URL}:${process.env.APPLICATION_PORT}/${this.image}`;
+});
+
 const BlogModel = mongoose.model<IBlog>("blog", BlogSchema);
 
 export type { IBlog };
