@@ -6,6 +6,8 @@ import { CourseAdminApiRoutes } from "./course";
 import { ChapterAdminApiRoutes } from "./chapter";
 import { EpisodeAdminApiRoutes } from "./episode";
 import { UserAdminApiRoutes } from "./user";
+import { RoleAdminApiRoutes } from "./role";
+import { PermissionAdminApiRoutes } from "./permission";
 
 const router = Router();
 
@@ -16,5 +18,7 @@ router.use("/courses", CourseAdminApiRoutes);
 router.use("/chapter", ChapterAdminApiRoutes);
 router.use("/episode", EpisodeAdminApiRoutes);
 router.use("/user", UserAdminApiRoutes);
+router.use("/permission", PermissionAdminApiRoutes);
+router.use("/role", RoleAdminApiRoutes);
 
 export const AdminRoutes = router;

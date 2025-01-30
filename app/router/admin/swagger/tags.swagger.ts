@@ -3,6 +3,8 @@
  *  tags:
  *     -  name: Admin-Panel
  *        description: action of admin (add, remove, edit and any do)
+ *     -  name: RBAC(AdminPanel)
+ *        description: Role Base AccessControl System create and manage role and permission
  *     -  name: User(AdminPanel)
  *        description: Management User of websites
  *     -  name: Chapter(AdminPanel)
