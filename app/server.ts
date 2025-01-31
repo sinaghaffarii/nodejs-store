@@ -54,7 +54,7 @@ export default class Application {
             },
             servers: [
               {
-                url: "http://localhost:4000",
+                url: "http://localhost:8585",
               },
             ],
             components: {
@@ -70,7 +70,9 @@ export default class Application {
           },
           apis: ["./app/router/**/*.ts"],
         }),
-        { explorer: true }
+        {
+          explorer: true,
+        }
       )
     );
   }

@@ -1,13 +1,13 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 interface IPermission extends Document {
-  title: string;
+  name: string;
   description: string;
 }
 
 const PermissionSchema = new Schema<IPermission>(
   {
-    title: { type: String, unique: true },
+    name: { type: String, unique: true },
     description: { type: String, default: "" },
   },
   {
@@ -17,6 +17,7 @@ const PermissionSchema = new Schema<IPermission>(
   }
 );
 
-const PermissionsModel = mongoose.model<IPermission>("permission", PermissionSchema);
+const PermissionsModel = mongoose.model<IPermission>("Permission", PermissionSchema);
 
 export { PermissionsModel };
+export type { IPermission };

@@ -8,7 +8,7 @@ interface IRole extends Document {
 const RoleSchema = new Schema<IRole>(
   {
     title: { type: String, unique: true },
-    permissions: { type: [mongoose.Schema.Types.ObjectId], ref: "permissions", default: [] },
+    permissions: { type: [mongoose.Schema.Types.ObjectId], ref: "Permission", default: [] },
   },
   {
     toJSON: {
@@ -17,6 +17,6 @@ const RoleSchema = new Schema<IRole>(
   }
 );
 
-const RoleModel = mongoose.model<IRole>("role", RoleSchema);
+const RoleModel = mongoose.model<IRole>("Role", RoleSchema);
 
 export { RoleModel };

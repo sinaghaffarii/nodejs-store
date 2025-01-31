@@ -96,7 +96,7 @@
  *                  content:
  *                      application/json:
  *                          schema:
- *                              $ref:  '#definitions/chapterOfCourseDefinition'
+ *                              $ref:  '#/definitions/chapterOfCourseDefinition'
  */
 
 /**
@@ -116,7 +116,7 @@
  *                  content:
  *                      application/json:
  *                          schema:
- *                              $ref:  '#definitions/publicDefinition'
+ *                              $ref:  '#/definitions/publicDefinition'
  */
 
 /**
@@ -145,6 +145,6 @@
  *                  content:
  *                      application/json:
  *                          schema:
- *                              $ref:  '#definitions/publicDefinition'
+ *                              $ref:  '#/definitions/publicDefinition'
  */
 
