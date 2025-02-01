@@ -1,4 +1,3 @@
-
 /**
  * @swagger
  *  definitions:
@@ -26,6 +25,9 @@
  *                                      type: string
  *                                      description: Title of the role
  *                                      example: "title of role"
+ *                                  description:
+ *                                      type: string
+ *                                      description: description of the role
  *                                  permissions:
  *                                      type: array
  *                                      items:
@@ -54,19 +56,26 @@
  *              type: object
  *              required:
  *                  -   title
+ *                  -   description
  *              properties:
  *                  title:
  *                    type: string
  *                    description: the title of role
+ *                  description:
+ *                    type: string
+ *                    description: the description of role
  *                  permissions:
  *                    type: array
- *                    description: the permissionsID for role 
+ *                    description: the permissionsID for role
  *          Edit-Role:
  *              type: object
  *              properties:
  *                  title:
  *                    type: string
  *                    description: the title of role
+ *                  description:
+ *                    type: string
+ *                    description: the description of role
  *                  permissions:
  *                    type: array
  *                    description: the permissionsID for role

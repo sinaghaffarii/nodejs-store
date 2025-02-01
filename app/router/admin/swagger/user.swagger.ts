@@ -78,24 +78,35 @@
 
 /**
  * @swagger
+ *  /admin/user/profile:
+ *      get:
+ *          tags: [User(AdminPanel)]
+ *          summary: get user profile
+ *          responses:
+ *              200:
+ *                  description: success
+ */
+
+/**
+ * @swagger
  * /admin/user/update-profile:
  *      patch:
  *          tags: [User(AdminPanel)]
  *          summary: update user detail and profile
  *          requestBody:
  *              required: true
- *              content: 
+ *              content:
  *                  application/x-www-form-urlencoded:
  *                      schema:
- *                          $ref: "#/components/schemas/Update-Profile"              
+ *                          $ref: "#/components/schemas/Update-Profile"
  *                  application/json:
  *                      schema:
  *                          $ref: "#/components/schemas/Update-Profile"
- *          response:
+ *          responses:
  *              200:
  *                  description: success
- *                  content: 
+ *                  content:
  *                      application/json:
  *                          schema:
- *                              $ref: '#/definitions/ListOfUsers'           
+ *                              $ref: '#/definitions/ListOfUsers'
  */

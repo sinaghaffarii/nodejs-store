@@ -15,7 +15,7 @@ interface IUser extends Document {
   bills: any[];
   discount: number;
   birthday: string;
-  roles: string[];
+  role: string;
   courses: mongoose.Types.ObjectId[];
 }
 const UserSchema = new MongooseSchema<IUser>(
@@ -36,7 +36,7 @@ const UserSchema = new MongooseSchema<IUser>(
     bills: { type: [], default: [] },
     discount: { type: Number, default: 0 },
     birthday: { type: String },
-    roles: { type: [String], default: [ConstantConfig.RULES.USER] },
+    role: { type: String, default: ConstantConfig.RULES.USER },
     courses: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "course",

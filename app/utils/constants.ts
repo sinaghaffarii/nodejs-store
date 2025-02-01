@@ -1,13 +1,23 @@
 export const ConstantConfig = Object.freeze({
   // MongoIDPattern: /^(?=[a-fd]{24}$)(d+[a-f]|[a-f]+d)/i,
   MongoIDPattern: /^[a-f0-9]{24}$/i,
-  RULES: {
+  RULES: Object.freeze({
     USER: "USER",
     ADMIN: "ADMIN",
     WRITER: "WRITER",
     TEACHER: "TEACHER",
     SUPPLIER: "SUPPLIER",
-  },
+  }),
+  PERMISSIONS: Object.freeze({
+    USER: ["profile"],
+    ADMIN: ["all"],
+    SUPERADMIN: ["all"],
+    CONTENT_MANAGER: ["course", "blog", "category", "product"],
+    TEACHER: ["course", "blog"],
+    SUPPLIER: ["product"],
+    ALL: ["all"],
+  }),
+
   ACCESS_TOKEN_SECRET_KEY: "5CA35BB280FB78EDA53D10C511DB9FB978A3A917C35CF94F118D575CD8A502F5",
   REFRESH_TOKEN_SECRET_KEY: "A6CFD692D2F35D9F742E2116E1DB442B2783F9A8F4EF4D004F26F0E8112EA410",
 });

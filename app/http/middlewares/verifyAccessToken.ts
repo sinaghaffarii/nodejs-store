@@ -39,18 +39,3 @@ export function verifyAccessToken(req: Request, res: Response, next: NextFunctio
   }
 }
 
-interface User {
-  _id: string;
-  roles: string[];
-}
-export function checkRole(role: string) {
-  return function (req: Request, res: Response, next: NextFunction) {
-    try {
-      const user = req.user as User;
-      if (user && user.roles.includes(role)) return next();
-      throw createHttpError.Forbidden("شما به این قسمت دسترسی ندارید.");
-    } catch (error) {
-      next(error);
-    }
-  };
-}

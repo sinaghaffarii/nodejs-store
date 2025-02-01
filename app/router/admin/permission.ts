@@ -6,4 +6,5 @@ const router = Router();
 router.get("/list", AdminPermissionController.getAllPermissions);
 router.post("/add", AdminPermissionController.createNewPermission);
 router.delete("/remove/:id", AdminPermissionController.removePermission);
+router.patch("/update/:id", AdminPermissionController.updatePermissionById);
 export const PermissionAdminApiRoutes = router;

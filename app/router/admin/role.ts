@@ -7,4 +7,5 @@ const router = Router();
 router.get("/list", AdminRoleController.getAllRoles);
 router.post("/add", stringToArray("permissions"), AdminRoleController.createNewRole);
 router.delete("/remove/:field", AdminRoleController.removeRole);
+router.patch("/update/:id", stringToArray("permissions"), AdminRoleController.updateRoleById);
 export const RoleAdminApiRoutes = router;

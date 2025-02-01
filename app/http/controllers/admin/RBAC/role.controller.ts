@@ -5,6 +5,7 @@ import { StatusCodes } from "http-status-codes";
 import createHttpError from "http-errors";
 import { AddRoleSchema } from "@/http/validators/admin/RBAC.schema";
 import mongoose from "mongoose";
+import { copyObject, deleteInvalidPropertyInObject } from "@/utils/functions";
 
 class RoleController extends Controller {
   async getAllRoles(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -42,15 +43,38 @@ class RoleController extends Controller {
   async removeRole(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { field } = req.params;
-     const role =  await this.findRoleWidthIdOrTitle(field);
-      const removeRoleResult = await RoleModel.deleteOne({_id: role._id})
-      if(!removeRoleResult.deletedCount) throw new createHttpError.InternalServerError("حذف نقش انجام نشد!")
-        res.status(StatusCodes.OK).json({
-          statusCode: StatusCodes.OK,
-          data: {
-            message: "حذف نقش با موفقیت انجام شد."
-          }
-        })
+      const role = await this.findRoleWidthIdOrTitle(field);
+      const removeRoleResult = await RoleModel.deleteOne({ _id: role._id });
+      if (!removeRoleResult.deletedCount) throw new createHttpError.InternalServerError("حذف نقش انجام نشد!");
+      res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
+        data: {
+          message: "حذف نقش با موفقیت انجام شد.",
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async updateRoleById(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const role = await this.findRoleWidthIdOrTitle(id);
+      const data = copyObject(req.body);
+      deleteInvalidPropertyInObject(data, []);
+      const updateRoleResult = await RoleModel.updateOne(
+        { _id: role._id },
+        {
+          $set: data,
+        }
+      );
+      if (!updateRoleResult.modifiedCount) throw new createHttpError.InternalServerError("ویرایش نقش انجام نشد!");
+      res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
+        data: {
+          message: "ویرایش نقش با موفقیت انجام شد.",
+        },
+      });
     } catch (error) {
       next(error);
     }

@@ -45,6 +45,21 @@ class UserController extends Controller {
       next(error);
     }
   }
+
+  async userProfile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = req.user;
+      //bill, courses, discount
+      res.status(StatusCodes.OK).json({
+        statusCode: StatusCodes.OK,
+        data: {
+          user,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const AdminUserController = new UserController();
